@@ -2,6 +2,7 @@ package com.example.ai.orchestrator
 
 import android.util.Log
 import com.example.ai.agents.AgentExecutionResult
+import com.example.ai.agents.AgentPromptTemplates
 import com.example.ai.agents.AgentRole
 import com.example.ai.gemini.GeminiApiClient
 import com.example.data.db.AgentLog
@@ -11,6 +12,7 @@ import com.example.data.db.PortfolioHolding
 import com.example.data.db.StockQuote
 import com.example.data.db.TradeJournalEntry
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -38,14 +40,7 @@ class InvestOrchestrator(private val dao: InvestDao) {
         // Helper to run an agent through Gemini
         suspend fun executeAgent(role: AgentRole, taskDescription: String): AgentExecutionResult {
             val startTime = System.currentTimeMillis()
-            val agentPrompt = """
-                YOU ARE: ${role.title} (${role.category})
-                RESPONSIBILITY: ${role.description}
-                AVAILABLE TOOLS: ${role.tools.joinToString(", ")}
-
-                TASK: $taskDescription
-                Provide a structured executive response with key insights, confidence level (0-100%), and recommended action.
-            """.trimIndent()
+            val agentPrompt = AgentPromptTemplates.buildPragmaticPrompt(role, taskDescription, contextHeader)
 
             val response = GeminiApiClient.generateContent(contextHeader, agentPrompt)
             val duration = System.currentTimeMillis() - startTime
@@ -86,21 +81,27 @@ class InvestOrchestrator(private val dao: InvestDao) {
             return result
         }
 
-        Log.i(TAG, "Starting Orchestrator Multi-Agent Execution...")
+        Log.i(TAG, "Starting Orchestrator Parallel Multi-Agent Execution...")
 
-        // Stage 1: Macro & Market Intelligence
-        val marketIntel = executeAgent(AgentRole.MARKET_INTELLIGENCE, "Scan NSE 500 breadth, FII/DII liquidity, and index trends.")
-        val newsIntel = executeAgent(AgentRole.NEWS_INTELLIGENCE, "Scan corporate filings and macro news for NSE/BSE stocks.")
-        val macroIntel = executeAgent(AgentRole.MACRO_ECONOMY, "Evaluate RBI policy rate expectations and crude oil price impact on Indian markets.")
+        // Stage 1: Parallel Execution of Macro & Market Intelligence
+        val (marketIntel, newsIntel, macroIntel) = kotlinx.coroutines.coroutineScope {
+            val d1 = async { executeAgent(AgentRole.MARKET_INTELLIGENCE, "Scan NSE 500 breadth, FII/DII liquidity, and index trends.") }
+            val d2 = async { executeAgent(AgentRole.NEWS_INTELLIGENCE, "Scan corporate filings and macro news for NSE/BSE stocks.") }
+            val d3 = async { executeAgent(AgentRole.MACRO_ECONOMY, "Evaluate RBI policy rate expectations and crude oil price impact on Indian markets.") }
+            Triple(d1.await(), d2.await(), d3.await())
+        }
 
         results.add(marketIntel)
         results.add(newsIntel)
         results.add(macroIntel)
 
-        // Stage 2: Fundamental, Technical & Trap Detection
-        val techAnalysis = executeAgent(AgentRole.TECHNICAL_ANALYSIS, "Identify breakout setups and RSI/MACD signals in Nifty 200 swing watchlist.")
-        val sectorRotation = executeAgent(AgentRole.SECTOR_ROTATION, "Determine relative strength score for Capital Goods, Auto, Banking, and Renewable Energy.")
-        val trapDetector = executeAgent(AgentRole.TRAP_DETECTION, "Perform red flag screening on promoter pledged shares and debt ratios.")
+        // Stage 2: Parallel Execution of Fundamental, Technical & Trap Detection
+        val (techAnalysis, sectorRotation, trapDetector) = kotlinx.coroutines.coroutineScope {
+            val d1 = async { executeAgent(AgentRole.TECHNICAL_ANALYSIS, "Identify breakout setups and RSI/MACD signals in Nifty 200 swing watchlist.") }
+            val d2 = async { executeAgent(AgentRole.SECTOR_ROTATION, "Determine relative strength score for Capital Goods, Auto, Banking, and Renewable Energy.") }
+            val d3 = async { executeAgent(AgentRole.TRAP_DETECTION, "Perform red flag screening on promoter pledged shares and debt ratios.") }
+            Triple(d1.await(), d2.await(), d3.await())
+        }
 
         results.add(techAnalysis)
         results.add(sectorRotation)
@@ -140,16 +141,7 @@ class InvestOrchestrator(private val dao: InvestDao) {
         val timeNow = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).format(Date())
         val startTime = System.currentTimeMillis()
 
-        val agentPrompt = """
-            YOU ARE: ${role.title} (${role.category})
-            RESPONSIBILITY: ${role.description}
-            AVAILABLE TOOLS: ${role.tools.joinToString(", ")}
-
-            TARGETED SINGLE-AGENT SCAN:
-            $taskDescription
-
-            Provide an immediate, precise tactical assessment with entry/exit catalysts, risk parameters, and confidence level.
-        """.trimIndent()
+        val agentPrompt = AgentPromptTemplates.buildPragmaticPrompt(role, taskDescription, contextHeader)
 
         val response = GeminiApiClient.generateContent(contextHeader, agentPrompt)
         val duration = System.currentTimeMillis() - startTime
@@ -214,12 +206,24 @@ class InvestOrchestrator(private val dao: InvestDao) {
             )
             singleAgentOutputs.add("[LIVE SINGLE-AGENT SCAN - SWING EXPERT]:\n${swingScan.findingsText}")
             singleAgentOutputs.add("[LIVE SINGLE-AGENT SCAN - TIMING CATALYST]:\n${timingScan.findingsText}")
-        } else if (queryLower.contains("trap") || queryLower.contains("red flag") || queryLower.contains("pledge")) {
+        } else if (queryLower.contains("risk") || queryLower.contains("stop loss") || queryLower.contains("sl") || queryLower.contains("sizing")) {
+            val riskScan = runTargetedSingleAgentScan(
+                AgentRole.RISK_ANALYSIS,
+                "Evaluate portfolio risk boundaries, stop loss invalidation levels, and capital allocation sizing for query: $userQuery"
+            )
+            singleAgentOutputs.add("[LIVE SINGLE-AGENT SCAN - RISK ANALYSIS]:\n${riskScan.findingsText}")
+        } else if (queryLower.contains("trap") || queryLower.contains("red flag") || queryLower.contains("pledge") || queryLower.contains("audit")) {
             val trapScan = runTargetedSingleAgentScan(
                 AgentRole.TRAP_DETECTION,
                 "Perform single-agent trap and accounting integrity audit across 20+ liquid stocks for query: $userQuery"
             )
             singleAgentOutputs.add("[LIVE SINGLE-AGENT SCAN - TRAP DETECTION]:\n${trapScan.findingsText}")
+        } else if (queryLower.contains("fundamental") || queryLower.contains("balance sheet") || queryLower.contains("margin") || queryLower.contains("debt") || queryLower.contains("profit")) {
+            val fundScan = runTargetedSingleAgentScan(
+                AgentRole.FUNDAMENTAL_ANALYSIS,
+                "Analyze balance sheet health, P&L growth, debt ratios, and ROE/ROCE for query: $userQuery"
+            )
+            singleAgentOutputs.add("[LIVE SINGLE-AGENT SCAN - FUNDAMENTAL ANALYSIS]:\n${fundScan.findingsText}")
         } else if (queryLower.contains("suzlon") || queryLower.contains("tata") || queryLower.contains("l&t") || queryLower.contains("hdfc") || queryLower.contains("reliance") || queryLower.contains("bhel") || queryLower.contains("hal") || queryLower.contains("persistent") || queryLower.contains("bharti")) {
             val techScan = runTargetedSingleAgentScan(
                 AgentRole.TECHNICAL_ANALYSIS,
@@ -286,45 +290,49 @@ class InvestOrchestrator(private val dao: InvestDao) {
         }
 
         val cioPrompt = """
-            YOU ARE THE USER'S PERSONAL AI TRADING ASSISTANT & CO-PILOT FOR BHARAT INVEST OS.
-            You bridge the gap between the User, Chief AI (CIO), and 27 Autonomous Agents!
+            YOU ARE A CHIEF INVESTMENT OFFICER (CIO) ASSISTANT & SENIOR INSTITUTIONAL STRATEGIST.
+            You bring institutional precision, quantitative rigor, and capital allocation discipline to Bharat Invest OS.
+            You bridge the user directly with our 27 Autonomous Research Desk Agents and Chief AI Desk.
 
             SYSTEM HIERARCHY & FLOW:
-            [All 50 Nifty Stocks] ──> [27 Agents Scan 24/7] ──> [Chief AI Filter] ──> [Your Assistant Conversations]
+            [All 50 Nifty Equities] ──> [27 Autonomous Desk Agents Scan 24/7] ──> [CIO Institutional Filter] ──> [Your Senior Analyst Guidance]
 
-            LIVE MARKET TIMING & TIME AWARENESS:
+            LIVE MARKET MICROSTRUCTURE & TIMING:
             - Current IST Time: ${systemContext.currentTime}
             - Market Status: ${systemContext.marketStatus} (${systemContext.marketSession})
             - Schedule: Market Opens at ${systemContext.marketOpensAt} | Closes at ${systemContext.marketClosesAt}
-            - Timing Countdown: ${systemContext.marketTimingCountdown}
+            - Countdown: ${systemContext.marketTimingCountdown}
 
-            ORDER & EXECUTION CALCULATIONS:
+            DESK EXECUTION & ORDER RECONCILIATION:
             $orderStatsSummary
 
-            CONVERSATION HISTORY (What we talked about previously):
+            CONVERSATION HISTORY (Prior Desk Dialogue):
             $formattedHistory
 
-            30-MINUTE AUTONOMOUS BACKGROUND SCAN MEMORY LOGS:
+            30-MINUTE AUTONOMOUS BACKGROUND DESK MEMORY LOGS:
             $backgroundScanMemory
 
-            REAL-TIME TARGETED SINGLE-AGENT SCAN RESULTS:
+            REAL-TIME TARGETED SINGLE-AGENT DESK SCANS:
             ${if (singleAgentOutputs.isNotEmpty()) singleAgentOutputs.joinToString("\n\n") else "No additional single-agent trigger required."}
 
-            CURRENT USER PORTFOLIO:
+            CURRENT PORTFOLIO POSITIONING:
             $portfolioSummary
 
-            USER'S CURRENT MESSAGE:
+            USER INQUIRY:
             "$userQuery"
 
-            CRITICAL BEHAVIOR & GUIDELINES:
-            1. **BE A REAL FRIEND & KNOWLEDGEABLE CO-PILOT**:
-               - Respond naturally to follow-ups without repeating rigid templates!
-               - If the user asks about time, market status, when market opens/closes, buy/sell order counts, or how 27 agents work, answer accurately with real numbers!
-               - Remember what was discussed previously and build on it naturally.
-            2. **MATCH THE USER'S VIBE & ENERGY**:
-               - Warm, sharp, empathetic, and confident. Speak like a smart trading partner who has the 27 agents backing you up 24/7.
-            3. **WHEN A NEW TRADE THESIS IS REQUESTED**:
-               - Provide crisp quantitative parameters (Buy Range, Target, Stop Loss, Risk/Reward, Fundamental thesis, and Immediate Catalysts), delivered in an engaging conversational tone.
+            CRITICAL INSTITUTIONAL GUIDELINES:
+            1. **NO REPETITIVE BANNERS / DIRECT START**:
+               - DO NOT start your response with boilerplate headers, intro labels, or title banners (e.g. NEVER start with "GOLDMAN SACHS LEVEL MULTIAGENT ARCHITECTURE BRIEF" or "DESK BRIEF:").
+               - Start IMMEDIATELY with the direct answer or conversational insight responding to the user's inquiry.
+            2. **VOICE & PERSONA**:
+               - Speak with sharp authority, quantitative clarity, and pragmatic composure as a Senior MD & Chief Strategist.
+               - Accessible, sharp, insightful, and direct — avoiding fluff while maintaining an engaging partner-like tone.
+            3. **RESPONSIVENESS & DATA ACCURACY**:
+               - Address exact queries directly (e.g. market timing, order counts, portfolio P&L, 27-agent architecture) with accurate, real figures.
+               - Build seamlessly on previous context without regurgitating repetitive boilerplate templates.
+            4. **QUANTITATIVE TRADE EXECUTION**:
+               - When presenting or discussing trade recommendations, always specify: Ticker & Action, Entry Range, Target Price (% upside), Hard Stop Loss (% downside risk), Volatility-Adjusted Risk/Reward Ratio (minimum 1:2.5), Fundamental Thesis, and 24-48 Hr Immediate Institutional Catalyst.
         """.trimIndent()
 
         val response = GeminiApiClient.generateContent(

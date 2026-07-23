@@ -2,8 +2,11 @@ package com.example.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -26,15 +29,18 @@ fun TerminalBottomNavBar(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .windowInsetsPadding(WindowInsets.navigationBars),
         color = TerminalCard,
         border = androidx.compose.foundation.BorderStroke(1.dp, TerminalBorder)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp, horizontal = 4.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 8.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             NavItem(
@@ -112,42 +118,42 @@ private fun NavItem(
     onClick: () -> Unit,
     testTag: String
 ) {
+    val containerBg = if (isSelected) SapphireBlueGlow else androidx.compose.ui.graphics.Color.Transparent
     val iconColor = if (isSelected) SapphireBlue else TextMuted
     val textColor = if (isSelected) TextPrimary else TextMuted
 
-    Column(
+    Surface(
+        onClick = onClick,
         modifier = Modifier
-            .clickable { onClick() }
-            .padding(horizontal = 4.dp, vertical = 2.dp)
+            .defaultMinSize(minWidth = 64.dp, minHeight = 48.dp)
             .testTag(testTag),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        shape = RoundedCornerShape(12.dp),
+        color = containerBg,
+        border = if (isSelected) androidx.compose.foundation.BorderStroke(1.dp, SapphireBlue.copy(alpha = 0.3f)) else null
     ) {
-        if (isSelected) {
-            Box(
-                modifier = Modifier
-                    .size(4.dp)
-                    .clip(CircleShape)
-                    .background(SapphireBlue)
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = iconColor,
+                modifier = Modifier.size(18.dp)
             )
+
             Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = textColor,
+                fontSize = 10.sp,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+            )
         }
-
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = iconColor,
-            modifier = Modifier.size(20.dp)
-        )
-
-        Spacer(modifier = Modifier.height(2.dp))
-
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = textColor,
-            fontSize = 9.sp,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-        )
     }
 }
+
