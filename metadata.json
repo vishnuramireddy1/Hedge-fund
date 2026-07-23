@@ -1,0 +1,6 @@
+{
+  "name": "Bharat Invest OS",
+  "description": "AI-Powered Personal Investment Operating System for the Indian Stock Market",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
