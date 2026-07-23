@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bharat Invest OS - Institutional Hedge Fund Terminal</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Header Bar -->
+  <header class="header-bar">
+    <div class="brand-section">
+      <div class="brand-badge">BHARAT</div>
+      <div class="brand-title">INVEST OS</div>
+      <div class="brand-version">v3.6 Institutional Terminal</div>
+    </div>
+
+    <div class="status-pills">
+      <div class="pill">
+        <span class="dot dot-green" id="status-dot"></span>
+        <span id="market-status">LIVE CONTINUOUS TRADING</span>
+      </div>
+      <div class="pill">
+        <span>🕒</span>
+        <span id="clock-time">16:54:42 IST</span>
+      </div>
+      <button class="btn-scan" id="btn-run-scan">
+        ⚡ Run 27-Agent Scan
+      </button>
+    </div>
+  </header>
+
+  <!-- Market Ticker Bar -->
+  <div class="ticker-bar">
+    <div class="ticker-item">
+      <span class="ticker-name">NIFTY 50</span>
+      <span class="ticker-val">24,141.95</span>
+      <span class="ticker-change up">+0.77%</span>
+    </div>
+    <div class="ticker-item">
+      <span class="ticker-name">BANK NIFTY</span>
+      <span class="ticker-val">51,820.40</span>
+      <span class="ticker-change up">+0.45%</span>
+    </div>
+    <div class="ticker-item">
+      <span class="ticker-name">SENSEX</span>
+      <span class="ticker-val">79,480.12</span>
+      <span class="ticker-change up">+0.62%</span>
+    </div>
+    <div class="ticker-item">
+      <span class="ticker-name">INDIA VIX</span>
+      <span class="ticker-val">12.85</span>
+      <span class="ticker-change down">-3.20%</span>
+    </div>
+    <div class="ticker-item">
+      <span class="ticker-name">TATAMOTORS</span>
+      <span class="ticker-val">₹988.00</span>
+      <span class="ticker-change up">+1.85%</span>
+    </div>
+    <div class="ticker-item">
+      <span class="ticker-name">BHARTIARTL</span>
+      <span class="ticker-val">₹1,455.00</span>
+      <span class="ticker-change up">+1.12%</span>
+    </div>
+    <div class="ticker-item">
+      <span class="ticker-name">PERSISTENT</span>
+      <span class="ticker-val">₹5,430.00</span>
+      <span class="ticker-change up">+2.40%</span>
+    </div>
+    <div class="ticker-item">
+      <span class="ticker-name">SUZLON</span>
+      <span class="ticker-val">₹65.20</span>
+      <span class="ticker-change up">+4.15%</span>
+    </div>
+  </div>
+
+  <!-- Main Area -->
+  <div class="main-wrapper">
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-tab="dashboard">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" data-tab="agents">
+        <span class="nav-icon">🤖</span> 27 Agents Matrix
+      </div>
+      <div class="nav-item" data-tab="cio">
+        <span class="nav-icon">💼</span> CIO AI Assistant
+      </div>
+      <div class="nav-item" data-tab="portfolio">
+        <span class="nav-icon">📈</span> Portfolio
+      </div>
+      <div class="nav-item" data-tab="journal">
+        <span class="nav-icon">📝</span> Trade Journal
+      </div>
+      <div class="nav-item" data-tab="forensic">
+        <span class="nav-icon">🛡️</span> Forensic Scanner
+      </div>
+      <div class="nav-item" data-tab="knowledge">
+        <span class="nav-icon">📚</span> Knowledge Base
+      </div>
+      <div class="nav-item" data-tab="security">
+        <span class="nav-icon">🔒</span> Security Audit
+      </div>
+    </nav>
+
+    <!-- Content Area -->
+    <main class="content-area">
+
+      <!-- View 1: Dashboard -->
+      <section class="view-panel active" id="view-dashboard">
+        <div class="section-title">📊 Executive Portfolio & Market Dashboard</div>
+        
+        <div class="grid-4">
+          <div class="metric-card">
+            <div class="metric-label">Portfolio Valuation</div>
+            <div class="metric-value" id="dash-portfolio-val">₹18.42 Lakhs</div>
+            <div class="metric-sub">+₹1.25 L unrealized gain</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Total Unrealized P&L</div>
+            <div class="metric-value" id="dash-pnl">+₹1,24,500 (+7.27%)</div>
+            <div class="metric-sub">Across 3 active swing positions</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Cash Buffer Reserve</div>
+            <div class="metric-value">₹14.45 Lakhs</div>
+            <div class="metric-sub">35% Liquidity Shield for Pullbacks</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">27-Agent Cron Status</div>
+            <div class="metric-value">Active 24/7</div>
+            <div class="metric-sub">30-Minute Interval Scanning</div>
+          </div>
+        </div>
+
+        <!-- NEW: Position Calculator Widget -->
+        <div class="calc-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-weight:700; font-size:15px; color:var(--text-primary);">🧮 Interactive Position Sizing & Target Return Calculator</div>
+            <div class="agent-cat">INSTITUTIONAL QUANT ENGINE</div>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+            <div>
+              <label style="font-size:12px; color:var(--text-secondary);">Select Capital Amount: <strong style="color:var(--text-primary);" id="lbl-cap">₹10,000</strong></label>
+              <input type="range" min="2000" max="500000" step="1000" value="10000" class="range-slider" id="slider-cap">
+            </div>
+            <div>
+              <label style="font-size:12px; color:var(--text-secondary);">Target Return Objective: <strong style="color:var(--text-primary);" id="lbl-tgt">3.5%</strong></label>
+              <input type="range" min="1" max="15" step="0.5" value="3.5" class="range-slider" id="slider-tgt">
+            </div>
+          </div>
+          <div style="background-color:var(--bg-darker); padding:14px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;" id="calc-output-box">
+            <div>
+              <div style="font-size:11px; color:var(--text-muted);">Recommended Setup: <strong>SUZLON ENERGY (153 Shares @ ₹65.20)</strong></div>
+              <div style="font-size:13px; color:var(--accent-green); font-weight:700;">Expected Absolute Profit: +₹351.90 | Risk Cap: -₹214.20</div>
+            </div>
+            <button class="btn-scan" id="btn-calc-ask-cio">Discuss with CIO Agent 💬</button>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 10px;">🔥 Top 3 High-Conviction Institutional Setups</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Ticker Symbol</th>
+                <th>Strategy Type</th>
+                <th>Entry Range ₹</th>
+                <th>Target Price ₹</th>
+                <th>Hard Stop Loss ₹</th>
+                <th>Risk/Reward</th>
+                <th>Immediate Institutional Catalyst</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>TATA MOTORS</strong></td>
+                <td><span class="agent-cat">SWING_BREAKOUT</span></td>
+                <td>₹980.00 – ₹988.00</td>
+                <td><strong style="color:var(--accent-green);">₹1,120.00 (+13.6%)</strong></td>
+                <td>₹935.00 (-4.8%)</td>
+                <td><strong>1 : 2.83</strong></td>
+                <td>50-EMA Golden Cross + 3.2x Volume Surge + JLR 148k backlog</td>
+              </tr>
+              <tr>
+                <td><strong>BHARTI AIRTEL</strong></td>
+                <td><span class="agent-cat">BLUECHIP_COMPOUNDER</span></td>
+                <td>₹1,440.00 – ₹1,455.00</td>
+                <td><strong style="color:var(--accent-green);">₹1,680.00 (+15.8%)</strong></td>
+                <td>₹1,380.00 (-4.5%)</td>
+                <td><strong>1 : 3.51</strong></td>
+                <td>ARPU ₹211+ free cash flow + 20-EMA Rebound</td>
+              </tr>
+              <tr>
+                <td><strong>PERSISTENT SYSTEMS</strong></td>
+                <td><span class="agent-cat">SWING_BREAKOUT</span></td>
+                <td>₹5,400.00 – ₹5,430.00</td>
+                <td><strong style="color:var(--accent-green);">₹6,250.00 (+15.3%)</strong></td>
+                <td>₹5,120.00 (-5.1%)</td>
+                <td><strong>1 : 3.00</strong></td>
+                <td>GenAI 15%+ TCV booking growth + 3-month flag breakout</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- View 2: 27 Agents Matrix -->
+      <section class="view-panel" id="view-agents">
+        <div class="section-title">🤖 27 Autonomous Research Desk Agents</div>
+        
+        <!-- NEW: Multi-Agent Execution Pipeline Diagram -->
+        <div class="pipeline-container">
+          <div class="pipeline-node">
+            <div style="color:var(--accent-blue);">Stage 1: Intelligence</div>
+            <div style="font-size:10px; color:var(--text-secondary);">Market, News & Macro</div>
+          </div>
+          <div class="pipeline-arrow">➔</div>
+          <div class="pipeline-node">
+            <div style="color:var(--accent-purple);">Stage 2: Forensics</div>
+            <div style="font-size:10px; color:var(--text-secondary);">Tech, Traps & Ratios</div>
+          </div>
+          <div class="pipeline-arrow">➔</div>
+          <div class="pipeline-node">
+            <div style="color:var(--accent-amber);">Stage 3: Executive</div>
+            <div style="font-size:10px; color:var(--text-secondary);">CIO Synthesis Desk</div>
+          </div>
+          <div class="pipeline-arrow">➔</div>
+          <div class="pipeline-node">
+            <div style="color:var(--accent-green);">Stage 4: Memory DB</div>
+            <div style="font-size:10px; color:var(--text-secondary);">Knowledge Persistence</div>
+          </div>
+        </div>
+
+        <div class="agents-grid" id="agents-grid-container">
+          <!-- Dynamic rendering from agents.js -->
+        </div>
+      </section>
+
+      <!-- View 3: CIO AI Assistant Terminal -->
+      <section class="view-panel" id="view-cio">
+        <div class="section-title">💼 Chief Investment Officer (CIO) AI Assistant</div>
+        <div class="chat-container">
+          <div class="chat-history" id="chat-history-container">
+            <!-- Dynamic rendering from app.js -->
+          </div>
+          <div style="padding: 8px 14px; background-color: var(--bg-main); border-top: 1px solid var(--border-color); display: flex; gap: 8px; overflow-x: auto;">
+            <button class="pill chip-btn" data-prompt="my amount: 10000 and my ask of return for the invested period: 3 to 4 percentage" style="cursor:pointer; border-color:var(--accent-blue);">💰 Plan ₹10k Trade (3-4% Return)</button>
+            <button class="pill chip-btn" data-prompt="Explain how you take support of all 27 agents in our discussion" style="cursor:pointer; border-color:var(--accent-purple);">🤖 Explain 27-Agent Support</button>
+            <button class="pill chip-btn" data-prompt="Run forensic trap audit on our watchlist" style="cursor:pointer; border-color:var(--accent-amber);">🛡️ Forensic Trap Audit</button>
+            <button class="pill chip-btn" data-prompt="Trigger 27-agent re-scan across NSE market" style="cursor:pointer; border-color:var(--accent-green);">🔄 Trigger 27-Agent Re-Scan</button>
+          </div>
+          <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Ask CIO Assistant for swing trades, position sizing, 27-agent support, or risk limits...">
+            <button class="btn-send" id="btn-send-chat">Send</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 4: Portfolio -->
+      <section class="view-panel" id="view-portfolio">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="section-title">📈 Portfolio Manager & Position Allocations</div>
+          <button class="btn-scan" id="btn-add-holding">+ Add Position</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Holding</th>
+                <th>Strategy</th>
+                <th>Qty</th>
+                <th>Avg Buy Price</th>
+                <th>Current Price</th>
+                <th>Market Value</th>
+                <th>Unrealized P&L</th>
+                <th>Risk Parameters</th>
+              </tr>
+            </thead>
+            <tbody id="portfolio-table-body">
+              <!-- Dynamic rendering from app.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- View 5: Trade Journal -->
+      <section class="view-panel" id="view-journal">
+        <div class="section-title">📝 Trade Journal & Order Execution Log</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Ticker Symbol</th>
+                <th>Buy Price ₹</th>
+                <th>Qty</th>
+                <th>Target & Stop Loss</th>
+                <th>Trade Rationale</th>
+                <th>Execution Status</th>
+              </tr>
+            </thead>
+            <tbody id="journal-table-body">
+              <!-- Dynamic rendering from app.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- View 6: Forensic Scanner -->
+      <section class="view-panel" id="view-forensic">
+        <div class="section-title">🛡️ Forensic Trap & Accounting Integrity Scanner</div>
+        <div class="grid-4">
+          <div class="metric-card">
+            <div class="metric-label">Promoter Pledge Status</div>
+            <div class="metric-value" style="color:var(--accent-green);">0.0% Pledged</div>
+            <div class="metric-sub">Clean across all 3 portfolio holdings</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Operating Cash Flow Divergence</div>
+            <div class="metric-value" style="color:var(--accent-green);">OCF > Net Income</div>
+            <div class="metric-sub">Strong cash conversion ratio (>85%)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Altman Z-Score Rating</div>
+            <div class="metric-value" style="color:var(--accent-green);">3.85 (Safe)</div>
+            <div class="metric-sub">Zero bankruptcy or solvency risk</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Beneish M-Score Rating</div>
+            <div class="metric-value" style="color:var(--accent-green);">-2.95 (Clean)</div>
+            <div class="metric-sub">No financial statement manipulation detected</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 7: Knowledge Base -->
+      <section class="view-panel" id="view-knowledge">
+        <div class="section-title">📚 Knowledge Base & Memory Articles</div>
+        <div class="table-container" style="padding: 20px;">
+          <h3 style="margin-bottom:10px;">CIO Multi-Agent Scan Brief (Latest)</h3>
+          <p style="color:var(--text-secondary); line-height:1.6;">
+            <strong>Macro State:</strong> Nifty 50 consolidating above 20-day EMA support with strong institutional FII/DII net buying.<br>
+            <strong>Sector Rotation:</strong> Automotive (+2.1%), Defense (+2.4%), and IT Services leading relative strength rankings.<br>
+            <strong>Capital Preservation:</strong> 35% Cash buffer maintained in liquid funds for opportunistic pullback entries.
+          </p>
+        </div>
+      </section>
+
+      <!-- View 8: Security Audit -->
+      <section class="view-panel" id="view-security">
+        <div class="section-title">🔒 System Security & Audit Report</div>
+        <div class="grid-4">
+          <div class="metric-card">
+            <div class="metric-label">PBKDF2 Encryption</div>
+            <div class="metric-value" style="color:var(--accent-green);">ACTIVE</div>
+            <div class="metric-sub">SHA-256 Key Derivation (10,000 rounds)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Flag Secure Window Mode</div>
+            <div class="metric-value" style="color:var(--accent-green);">ENABLED</div>
+            <div class="metric-sub">Screenshot & Overlay Protection</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Input Sanitization Engine</div>
+            <div class="metric-value" style="color:var(--accent-green);">ACTIVE</div>
+            <div class="metric-sub">SQLi / XSS Attack Injection Shield</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal: Add Holding -->
+  <div class="modal-overlay" id="modal-holding">
+    <div class="modal-content">
+      <div style="font-weight:700; font-size:16px;">Add New Portfolio Holding</div>
+      <form id="form-holding">
+        <div class="form-group">
+          <label>Ticker Symbol</label>
+          <input type="text" class="form-input" id="h-symbol" placeholder="e.g. RELIANCE" required>
+        </div>
+        <div class="form-group">
+          <label>Company Name</label>
+          <input type="text" class="form-input" id="h-name" placeholder="e.g. Reliance Industries Ltd" required>
+        </div>
+        <div class="form-group">
+          <label>Buy Price ₹</label>
+          <input type="number" step="0.01" class="form-input" id="h-price" placeholder="2950.00" required>
+        </div>
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" class="form-input" id="h-qty" placeholder="100" required>
+        </div>
+        <div class="form-group">
+          <label>Target Price ₹</label>
+          <input type="number" step="0.01" class="form-input" id="h-target" placeholder="3400.00" required>
+        </div>
+        <div class="form-group">
+          <label>Stop Loss ₹</label>
+          <input type="number" step="0.01" class="form-input" id="h-stop" placeholder="2800.00" required>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+          <button type="button" class="btn-send" id="btn-close-holding-modal" style="background-color:var(--bg-main);">Cancel</button>
+          <button type="submit" class="btn-send">Save Holding</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
