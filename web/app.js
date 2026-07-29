@@ -48,8 +48,73 @@ const state = {
   scanResults: []
 };
 
+// Authentication State Management
+state.user = null;
+state.token = localStorage.getItem('bharat_invest_token') || null;
+
+function checkAuthSession() {
+  const loginOverlay = document.getElementById('view-login');
+  const userBadge = document.getElementById('user-profile-badge');
+  const userDisplayName = document.getElementById('user-display-name');
+
+  const savedUser = localStorage.getItem('bharat_invest_user');
+  if (state.token && savedUser) {
+    try {
+      state.user = JSON.parse(savedUser);
+    } catch (e) {
+      state.user = { name: 'Institutional Trader', email: 'trader@bharatinvest.com' };
+    }
+  }
+
+  if (state.user && state.token) {
+    if (loginOverlay) loginOverlay.classList.remove('active');
+    if (userBadge) userBadge.style.display = 'flex';
+    if (userDisplayName) userDisplayName.textContent = state.user.name.split(' ')[0] || 'Trader';
+  } else {
+    if (loginOverlay) loginOverlay.classList.add('active');
+    if (userBadge) userBadge.style.display = 'none';
+  }
+}
+
+async function loginUser(email, password, remember = true) {
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (data.token && data.user) {
+      state.token = data.token;
+      state.user = data.user;
+
+      if (remember) {
+        localStorage.setItem('bharat_invest_token', data.token);
+        localStorage.setItem('bharat_invest_user', JSON.stringify(data.user));
+      }
+
+      checkAuthSession();
+      if (typeof speakAngelVoice === 'function') {
+        speakAngelVoice(`Welcome back, ${data.user.name}. Angel terminal authenticated and live.`);
+      }
+    }
+  } catch (e) {
+    console.error('Login error', e);
+  }
+}
+
+function logoutUser() {
+  state.token = null;
+  state.user = null;
+  localStorage.removeItem('bharat_invest_token');
+  localStorage.removeItem('bharat_invest_user');
+  checkAuthSession();
+}
+window.logoutUser = logoutUser;
+
 // Initialize Application
 function initApp() {
+  checkAuthSession();
   setupNavigation();
   setupEventListeners();
   updateLiveClockAndMarketStatus();
@@ -468,6 +533,44 @@ function setupEventListeners() {
       if (chatInput) {
         chatInput.value = `my amount: ${cap} and my ask of return for the invested period: ${tgt}`;
         handleSend();
+      }
+    });
+  }
+
+  // Authentication Form Event Listeners
+  const formLogin = document.getElementById('form-login');
+  if (formLogin) {
+    formLogin.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-passcode').value;
+      const remember = document.getElementById('remember-me').checked;
+      loginUser(email, pass, remember);
+    });
+  }
+
+  const btnInstant = document.getElementById('btn-instant-login');
+  if (btnInstant) {
+    btnInstant.addEventListener('click', () => {
+      loginUser('trader@bharatinvest.com', 'angel2026', true);
+    });
+  }
+
+  const btnTogglePass = document.getElementById('btn-toggle-pass');
+  const inputPass = document.getElementById('login-passcode');
+  if (btnTogglePass && inputPass) {
+    btnTogglePass.addEventListener('click', () => {
+      const isPass = inputPass.type === 'password';
+      inputPass.type = isPass ? 'text' : 'password';
+      btnTogglePass.textContent = isPass ? '🔒' : '👁️';
+    });
+  }
+
+  const userBadge = document.getElementById('user-profile-badge');
+  if (userBadge) {
+    userBadge.addEventListener('click', () => {
+      if (confirm('Are you sure you want to log out of Bharat Invest OS?')) {
+        logoutUser();
       }
     });
   }

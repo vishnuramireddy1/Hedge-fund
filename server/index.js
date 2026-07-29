@@ -179,6 +179,43 @@ app.post('/api/cio', async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 });
+
+// User Authentication Endpoint
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body;
+  // Support demo credentials or any valid input
+  const userEmail = email || 'trader@bharatinvest.com';
+  const token = 'token_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+  
+  res.json({
+    status: 'SUCCESS',
+    token: token,
+    user: {
+      name: 'Institutional Trader',
+      email: userEmail,
+      role: 'Portfolio Manager & Senior Trader',
+      tier: 'Institutional Enterprise Tier',
+      joined: '2026-01-15'
+    }
+  });
+});
+
+// Active Session Check Endpoint
+app.get('/api/me', (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  res.json({
+    status: 'ACTIVE',
+    user: {
+      name: 'Institutional Trader',
+      email: 'trader@bharatinvest.com',
+      role: 'Portfolio Manager & Senior Trader',
+      tier: 'Institutional Enterprise Tier'
+    }
+  });
+});
 // Health check endpoint
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 

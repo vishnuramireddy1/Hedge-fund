@@ -31,6 +31,12 @@
       <button class="btn-scan" id="btn-run-scan">
         ⚡ Run 27-Agent Scan
       </button>
+
+      <div class="pill user-profile-pill" id="user-profile-badge" style="display:none; cursor:pointer;" title="Click to Logout">
+        <span style="font-size:14px;">👤</span>
+        <span id="user-display-name">Trader</span>
+        <span style="font-size:10px; color:var(--accent-red); margin-left:4px;">[Logout]</span>
+      </div>
     </div>
   </header>
 
@@ -423,6 +429,53 @@
           <button type="submit" class="btn-send">Save Holding</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Full-Screen Institutional Login Screen Overlay -->
+  <div class="login-overlay" id="view-login">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-badge">BHARAT INVEST OS</div>
+        <div class="login-title">Institutional Hedge Fund Terminal</div>
+        <div class="login-subtitle">Secure Access Control & Quantum Agent Interface</div>
+      </div>
+
+      <form id="form-login" class="login-form">
+        <div class="form-group">
+          <label for="login-email">Trader Access Email / ID</label>
+          <input type="email" id="login-email" class="form-input" placeholder="trader@bharatinvest.com" required value="trader@bharatinvest.com">
+        </div>
+
+        <div class="form-group">
+          <label for="login-passcode">Access Passcode / Security Key</label>
+          <div class="password-wrapper">
+            <input type="password" id="login-passcode" class="form-input" placeholder="••••••••••••" required value="angel2026">
+            <button type="button" class="btn-toggle-pass" id="btn-toggle-pass" title="Toggle Passcode Visibility">👁️</button>
+          </div>
+        </div>
+
+        <div class="login-options">
+          <label class="remember-label">
+            <input type="checkbox" id="remember-me" checked> Remember Session (30 Days)
+          </label>
+          <span class="security-tag">🔒 PBKDF2-SHA256</span>
+        </div>
+
+        <button type="submit" class="btn-login" id="btn-submit-login">
+          🔓 Authenticate & Launch Terminal
+        </button>
+
+        <div class="login-divider">OR</div>
+
+        <button type="button" class="btn-instant-demo" id="btn-instant-login">
+          ⚡ Instant Institutional Demo Access
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <div>Connected to 27 Autonomous Research Desks • RBI / SEBI Compliant Data Feeds</div>
+      </div>
     </div>
   </div>
 
