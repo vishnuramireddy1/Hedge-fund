@@ -26,14 +26,6 @@ try {
   process.exit(1);
 }
 
-// Helper to call Gemini (used by /api/ai and orchestrator when needed)
-async function callGemini(prompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${FIREBASE_API_KEY}`;
-  const body = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
-  const response = await axios.post(url, body);
-  const candidates = response.data?.candidates || [];
-  return candidates.map(c => c.content.parts.map(p => p.text).join('')).join('\n');
-}
 
 // Generic AI chat endpoint (CIO assistant)
 app.post('/api/ai', async (req, res) => {

@@ -1,4 +1,4 @@
-export const AgentRoles = {
+const AgentRoles = {
   // ── ROOT LEVEL (high‑level suites) ──────────────────────────────────────
   MARKET_OPERATIONS: {
     key: "MARKET_OPERATIONS",
