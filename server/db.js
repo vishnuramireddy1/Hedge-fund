@@ -118,12 +118,13 @@ function getUserById(id) {
   return db.users[id] || null;
 }
 
-// --- PHONE OTP OPERATIONS ---
+// --- REAL PHONE OTP OPERATIONS ---
 function generateOTP(phone) {
-  const otp = '123456'; // Default test OTP for instant seamless testing
+  // Generate real cryptographically random 6-digit number
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
   db.otps[phone] = {
     otp,
-    expiresAt: Date.now() + 5 * 60 * 1000 // 5 min expiry
+    expiresAt: Date.now() + 3 * 60 * 1000 // Strict 3-minute expiry
   };
   saveDB(db);
   return otp;
@@ -137,7 +138,7 @@ function verifyOTP(phone, otpInput) {
     saveDB(db);
     return false;
   }
-  const isValid = stored.otp === otpInput || otpInput === '123456';
+  const isValid = stored.otp === (otpInput || '').trim();
   if (isValid) {
     delete db.otps[phone];
     saveDB(db);

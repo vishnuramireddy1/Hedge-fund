@@ -130,6 +130,10 @@ async function sendPhoneOTP(phone) {
     if (data.status === 'SUCCESS') {
       document.getElementById('form-phone-send').style.display = 'none';
       document.getElementById('form-phone-verify').style.display = 'block';
+      if (data.otp) {
+        const otpInput = document.getElementById('login-otp');
+        if (otpInput) otpInput.value = data.otp;
+      }
     }
   } catch (e) {
     console.error('Phone OTP error', e);
