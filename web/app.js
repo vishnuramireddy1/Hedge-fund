@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- LIVE MARKET DATA MODULE ---
-const LIVE_SYMBOLS = ['^NSEI', '^NSEBANK', '^BSESN', '^INDIAVIX', 'TATAMOTORS.NS', 'BHARTIARTL.NS', 'PERSISTENT.NS', 'SUZLON.NS'];
+const LIVE_SYMBOLS = ['^NSEI', '^NSEBANK', '^BSESN', '^INDIAVIX', 'TMCV.NS', 'BHARTIARTL.NS', 'PERSISTENT.NS', 'RELIANCE.NS'];
 
 async function fetchLiveMarketData() {
   try {
@@ -58,7 +58,10 @@ async function fetchLiveMarketData() {
       const changeEl = document.getElementById(`tkr-${sym}-change`);
       
       if (valEl && quote.price) {
-        valEl.textContent = sym.includes('^') ? quote.price.toFixed(2) : `₹${quote.price.toFixed(2)}`;
+        const formatted = sym.startsWith('^') 
+          ? quote.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })
+          : `₹${quote.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        valEl.textContent = formatted;
       }
       
       if (changeEl && quote.changePercent) {
@@ -68,7 +71,7 @@ async function fetchLiveMarketData() {
       }
       
       // Update Portfolio Holdings
-      const baseSym = sym.replace('.NS', '');
+      const baseSym = sym.replace('.NS', '').replace('.BO', '');
       const holding = state.holdings.find(h => h.symbol === baseSym);
       if (holding && quote.price) {
         holding.currentPrice = quote.price;
@@ -80,6 +83,91 @@ async function fetchLiveMarketData() {
     renderPortfolio();
   } catch (err) {
     console.error('Failed to fetch live market data', err);
+  }
+}
+
+// --- STOCK SEARCH MODULE ---
+let searchTimeout = null;
+const searchInput = document.getElementById('stock-search-input');
+const searchResults = document.getElementById('search-results');
+
+if (searchInput) {
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    const query = searchInput.value.trim();
+    if (query.length < 2) {
+      searchResults.classList.remove('active');
+      return;
+    }
+    searchTimeout = setTimeout(() => performSearch(query), 300);
+  });
+
+  searchInput.addEventListener('focus', () => {
+    if (searchResults.innerHTML) searchResults.classList.add('active');
+  });
+
+  // Close on click outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-bar-wrapper')) {
+      searchResults.classList.remove('active');
+    }
+  });
+
+  // Ctrl+K shortcut
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      searchInput.focus();
+    }
+    if (e.key === 'Escape') {
+      searchResults.classList.remove('active');
+      searchInput.blur();
+    }
+  });
+}
+
+async function performSearch(query) {
+  try {
+    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+    const results = await res.json();
+    
+    if (results.length === 0) {
+      searchResults.innerHTML = '<div class="search-no-results">No results found</div>';
+    } else {
+      searchResults.innerHTML = results.map(r => `
+        <div class="search-result-item" data-symbol="${r.symbol}" onclick="onSearchResultClick('${r.symbol}', '${r.shortName.replace(/'/g, "\\'")}')">
+          <div class="search-result-left">
+            <span class="search-result-symbol">${r.symbol}</span>
+            <span class="search-result-name">${r.shortName}</span>
+          </div>
+          <div class="search-result-right">
+            <span class="search-result-exchange">${r.exchange}</span>
+            <span class="search-result-type">${r.type}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+    searchResults.classList.add('active');
+  } catch (err) {
+    console.error('Search failed', err);
+  }
+}
+
+async function onSearchResultClick(symbol, name) {
+  searchResults.classList.remove('active');
+  searchInput.value = `${symbol} — ${name}`;
+  
+  // Fetch real-time quote for the selected stock
+  try {
+    const res = await fetch(`/api/market?symbols=${symbol}`);
+    const data = await res.json();
+    const quote = data[symbol];
+    if (quote) {
+      const msg = `📊 ${name} (${symbol})\nPrice: ₹${quote.price?.toLocaleString('en-IN')}\nChange: ${quote.changePercent}\nPrev Close: ₹${quote.previousClose?.toLocaleString('en-IN')}`;
+      alert(msg);
+    }
+  } catch (err) {
+    console.error('Quote fetch failed', err);
   }
 }
 

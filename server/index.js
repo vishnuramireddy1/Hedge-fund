@@ -40,32 +40,60 @@ app.post('/api/ai', async (req, res) => {
   }
 });
 
-// Market ticker data endpoint (Yahoo Finance)
-const yahooFinance = require('yahoo-finance2').default;
+// Market data module (direct Yahoo Finance HTTP API — no library needed)
+const { getQuotes, searchSymbols, getChart } = require('./marketData');
 
+// Real-time market quotes endpoint
 app.get('/api/market', async (req, res) => {
   const symbols = req.query.symbols;
   if (!symbols) return res.status(400).json({ error: 'Missing symbols query param' });
   const arr = symbols.split(',');
   try {
+    const quotes = await getQuotes(arr);
+    // Transform to simpler format for backward compat
     const results = {};
-    for (const sym of arr) {
-      try {
-        const quote = await yahooFinance.quote(sym);
-        if (quote && quote.regularMarketPrice) {
-          results[sym] = {
-            price: quote.regularMarketPrice,
-            changePercent: (quote.regularMarketChangePercent > 0 ? '+' : '') + quote.regularMarketChangePercent.toFixed(2) + '%'
-          };
-        }
-      } catch (err) {
-        console.warn(`Could not fetch quote for ${sym}: ${err.message}`);
-      }
+    for (const [sym, q] of Object.entries(quotes)) {
+      results[sym] = {
+        symbol: q.symbol,
+        shortName: q.shortName,
+        price: q.price,
+        change: q.change,
+        changePercent: (q.changePercent > 0 ? '+' : '') + q.changePercent.toFixed(2) + '%',
+        previousClose: q.previousClose,
+        marketState: q.marketState
+      };
     }
     res.json(results);
   } catch (e) {
     console.error('Market error', e.message);
     res.status(500).json({ error: 'Market request failed' });
+  }
+});
+
+// Stock search endpoint — like a broker search bar
+app.get('/api/search', async (req, res) => {
+  const q = req.query.q;
+  if (!q) return res.status(400).json({ error: 'Missing query param q' });
+  try {
+    const results = await searchSymbols(q);
+    res.json(results);
+  } catch (e) {
+    console.error('Search error', e.message);
+    res.status(500).json({ error: 'Search failed' });
+  }
+});
+
+// Chart data endpoint
+app.get('/api/chart/:symbol', async (req, res) => {
+  const { symbol } = req.params;
+  const range = req.query.range || '1d';
+  const interval = req.query.interval || '5m';
+  try {
+    const data = await getChart(symbol, range, interval);
+    res.json(data || []);
+  } catch (e) {
+    console.error('Chart error', e.message);
+    res.status(500).json({ error: 'Chart request failed' });
   }
 });
 
