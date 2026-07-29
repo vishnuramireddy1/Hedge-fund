@@ -10,7 +10,7 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 
 # Install production dependencies (skip dev)
-RUN npm ci --only=production
+RUN npm install --production
 
 # Copy source code (everything else)
 COPY . .
