@@ -1,0 +1,75 @@
+{
+  "userProfile": {
+    "financialLiteracy": null,
+    "work": null,
+    "lifestyle": null,
+    "chatHistory": [
+      {
+        "from": "user",
+        "text": "my amount: 10000 and my ask of return for the invested period: 3 to 4 percentage",
+        "timestamp": "5:39:36 pm"
+      },
+      {
+        "from": "user",
+        "text": "Hey. Hi. Can you hear me?",
+        "timestamp": "5:39:52 pm"
+      },
+      {
+        "from": "cio",
+        "text": "👋 Hello! I’m your friendly CIO assistant. How can I help you today?",
+        "timestamp": "5:39:52 pm"
+      },
+      {
+        "from": "user",
+        "text": "my amount: 10000 and my ask of return for the invested period: 3 to 4 percentage",
+        "timestamp": "6:06:03 pm"
+      },
+      {
+        "from": "user",
+        "text": "my amount: ₹10,000 and my ask of return for the invested period: 3.5%",
+        "timestamp": "6:06:24 pm"
+      },
+      {
+        "from": "user",
+        "text": "Run forensic trap audit on our watchlist",
+        "timestamp": "6:21:12 pm"
+      },
+      {
+        "from": "user",
+        "text": "Classical Building Angel. CIO Executive brief.",
+        "timestamp": "6:21:16 pm"
+      },
+      {
+        "from": "user",
+        "text": "Run forensic trap audit on our watchlist",
+        "timestamp": "6:21:27 pm"
+      },
+      {
+        "from": "user",
+        "text": "forensic trap",
+        "timestamp": "6:21:34 pm"
+      },
+      {
+        "from": "user",
+        "text": "my amount: ₹10,000 and my ask of return for the invested period: 3.5%",
+        "timestamp": "7:36:33 pm"
+      },
+      {
+        "from": "user",
+        "text": "my amount: 10000 and my ask of return for the invested period: 3 to 4 percentage",
+        "timestamp": "7:41:01 pm"
+      },
+      {
+        "from": "user",
+        "text": "my amount: 10000 and my ask of return for the invested period: 3 to 4 percentage",
+        "timestamp": "7:41:08 pm"
+      },
+      {
+        "from": "user",
+        "text": "Trigger 27-agent re-scan across NSE market",
+        "timestamp": "7:41:24 pm"
+      }
+    ],
+    "portfolioInsights": []
+  }
+}

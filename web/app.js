@@ -250,10 +250,85 @@ async function pollInvestorGuardianAudit() {
       if (timeEl && data.auditedAtFormatted) {
         timeEl.textContent = `Last Audited: ${data.auditedAtFormatted}`;
       }
+
+      // Update AI Coverage metric card
+      const aiAuditEl = document.getElementById('dash-ai-audit-time');
+      if (aiAuditEl && data.auditedAtFormatted) {
+        aiAuditEl.textContent = `Last audit: ${data.auditedAtFormatted}`;
+      }
+
+      // Update AI Insights guardian timestamp
+      const insightTimeEl = document.getElementById('insight-guardian-time');
+      if (insightTimeEl && data.auditedAtFormatted) {
+        insightTimeEl.textContent = `Last audit: ${data.auditedAtFormatted}`;
+      }
+
+      // Populate AI Insights feed with alerts
+      const insightsFeed = document.getElementById('insights-feed');
+      if (insightsFeed && (data.criticalAlerts?.length || data.warningAlerts?.length)) {
+        // Keep the first "Guardian Active" card, then add alert cards
+        const existingCards = insightsFeed.querySelectorAll('.insight-card.alert-card');
+        existingCards.forEach(c => c.remove());
+
+        const allAlerts = [
+          ...(data.criticalAlerts || []).map(a => ({ text: a, level: 'critical' })),
+          ...(data.warningAlerts || []).map(a => ({ text: a, level: 'warning' }))
+        ];
+        allAlerts.forEach(alert => {
+          const card = document.createElement('div');
+          card.className = `insight-card ${alert.level} alert-card`;
+          card.innerHTML = `
+            <div class="insight-icon">${alert.level === 'critical' ? '🚨' : '⚠️'}</div>
+            <div class="insight-body">
+              <div class="insight-title">${alert.level === 'critical' ? 'Critical Alert' : 'Warning'}</div>
+              <div class="insight-text">${alert.text}</div>
+              <div class="insight-time">${data.auditedAtFormatted || ''}</div>
+            </div>
+          `;
+          insightsFeed.appendChild(card);
+        });
+
+        // Update notification bell badge
+        const badge = document.getElementById('notif-badge');
+        if (badge && allAlerts.length > 0) {
+          badge.textContent = allAlerts.length;
+          badge.style.display = 'flex';
+        }
+      }
+
+      // Render Forensic Scanner per-stock table
+      if (data.details && data.details.length > 0) {
+        renderForensicTable(data.details);
+      }
     }
   } catch (e) {
     console.error('Guardian polling error', e);
   }
+}
+
+function renderForensicTable(details) {
+  const tbody = document.getElementById('forensic-table-body');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+  details.forEach(d => {
+    const statusColor = d.status === 'HEALTHY' ? 'var(--accent-green)' : d.status === 'WARNING' ? 'var(--accent-amber)' : 'var(--accent-red)';
+    const mScoreColor = d.beneishMScore > -1.78 ? 'var(--accent-red)' : 'var(--accent-green)';
+    const pledgeColor = d.pledgeRatioPct > 15 ? 'var(--accent-red)' : 'var(--accent-green)';
+    const roicColor = d.roicPct < 11.5 ? 'var(--accent-amber)' : 'var(--accent-green)';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${d.symbol}</strong></td>
+      <td>₹${d.currentPrice?.toLocaleString('en-IN', { maximumFractionDigits: 2 }) || '—'}</td>
+      <td style="color:${d.pnlPct >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}; font-weight:700;">${d.pnlPct >= 0 ? '+' : ''}${d.pnlPct}%</td>
+      <td style="color:${mScoreColor}; font-weight:700;">${d.beneishMScore} ${d.beneishMScore > -1.78 ? '🚨' : '✅'}</td>
+      <td style="color:${pledgeColor}; font-weight:700;">${d.pledgeRatioPct}% ${d.pledgeRatioPct > 15 ? '⚠️' : '✅'}</td>
+      <td style="color:${roicColor}; font-weight:700;">${d.roicPct}%</td>
+      <td><span style="color:${statusColor}; font-weight:800;">${d.status}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
 if (document.readyState === 'loading') {
@@ -263,7 +338,25 @@ if (document.readyState === 'loading') {
 }
 
 // --- LIVE MARKET DATA MODULE ---
-const LIVE_SYMBOLS = ['^NSEI', '^NSEBANK', '^BSESN', '^INDIAVIX', 'TMCV.NS', 'BHARTIARTL.NS', 'PERSISTENT.NS', 'RELIANCE.NS'];
+const LIVE_SYMBOLS = [
+  '^NSEI', '^NSEBANK', '^BSESN', '^INDIAVIX',
+  'TMCV.NS', 'BHARTIARTL.NS', 'PERSISTENT.NS', 'RELIANCE.NS',
+  // Sector leaders
+  'HDFCBANK.NS', 'SUNPHARMA.NS', 'LT.NS', 'HINDUNILVR.NS', 'TATAMOTORS.NS'
+];
+
+// Sector symbol → DOM ID mapping
+const SECTOR_MAP = {
+  'HDFCBANK': 'banking',
+  'PERSISTENT': 'it',
+  'RELIANCE': 'energy',
+  'TATAMOTORS': 'auto',
+  'TMCV': 'auto',
+  'BHARTIARTL': 'telecom',
+  'SUNPHARMA': 'pharma',
+  'LT': 'infra',
+  'HINDUNILVR': 'fmcg'
+};
 
 async function fetchLiveMarketData() {
   try {
@@ -305,6 +398,20 @@ async function fetchLiveMarketData() {
       );
       if (holding && quote.price) {
         holding.currentPrice = quote.price;
+      }
+
+      // Update Sector Top Performers cards with live data
+      const sectorId = SECTOR_MAP[baseSym];
+      if (sectorId && quote.price) {
+        const priceEl = document.getElementById(`sec-${sectorId}-price`);
+        const changeEl = document.getElementById(`sec-${sectorId}-change`);
+        if (priceEl) priceEl.textContent = `\u20b9${quote.price.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+        if (changeEl && quote.changePercent !== undefined) {
+          const pct = typeof quote.changePercent === 'number' ? quote.changePercent : parseFloat(quote.changePercent);
+          const sign = pct >= 0 ? '+' : '';
+          changeEl.textContent = `${sign}${pct.toFixed(2)}%`;
+          changeEl.className = `sector-change ${pct >= 0 ? 'positive' : 'negative'}`;
+        }
       }
     });
 

@@ -127,8 +127,7 @@ function queryCioAssistantEngine(userQuery, chatHistory = []) {
       `Synthesized by our 4 discovery and execution sub-agents:\n\n` +
       `1. **TATA MOTORS** (Target ₹1,120 | Entry ₹980-988 | Stop Loss ₹935 | R:R 1:2.83)\n` +
       `2. **PERSISTENT SYSTEMS** (Target ₹6,250 | Entry ₹5,400 | Stop Loss ₹5,120 | R:R 1:3.00)\n` +
-      `3. **BHARTI AIRTEL** (Target ₹1,680 | Entry ₹1,440 | Stop Loss ₹1,380 | R:R 1:3.51)\n\n` +
-      `All 4 triggered sub-agents confirmed technical volume breakouts & catalyst alignment. What specific setup or risk parameter would you like to review next?`;
+      `All 4 triggered sub-agents confirmed technical volume breakouts & catalyst alignment. I am Angel, your CIO Assistant. What specific setup or risk parameter would you like to review next?`;
   }
 
   return {

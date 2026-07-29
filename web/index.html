@@ -29,9 +29,10 @@
         <span>🕒</span>
         <span id="clock-time">16:54:42 IST</span>
       </div>
-      <button class="btn-scan" id="btn-run-scan">
-        ⚡ Run 27-Agent Scan
-      </button>
+      <div class="pill notification-pill" id="notification-bell" style="cursor:pointer; position:relative;" title="Alerts">
+        <span>🔔</span>
+        <span class="notif-badge" id="notif-badge" style="display:none;">0</span>
+      </div>
 
       <div class="pill user-profile-pill" id="user-profile-badge" style="display:none; cursor:pointer;" title="Click to Logout">
         <span style="font-size:14px;">👤</span>
@@ -104,7 +105,7 @@
         <span class="nav-icon">📊</span> Dashboard
       </div>
       <div class="nav-item" data-tab="agents">
-        <span class="nav-icon">🤖</span> 27 Agents Matrix
+        <span class="nav-icon">🔔</span> AI Insights
       </div>
       <div class="nav-item" data-tab="cio">
         <span class="nav-icon">👼</span> Angel AI (CIO)
@@ -150,9 +151,9 @@
             <div class="metric-sub">35% Liquidity Shield for Pullbacks</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">27-Agent Cron Status</div>
-            <div class="metric-value">Active 24/7</div>
-            <div class="metric-sub">30-Minute Interval Scanning</div>
+            <div class="metric-label">AI Coverage</div>
+            <div class="metric-value" id="dash-ai-status">5 Guardians Active</div>
+            <div class="metric-sub" id="dash-ai-audit-time">Last audit: Initializing...</div>
           </div>
         </div>
 
@@ -250,35 +251,18 @@
         </div>
       </section>
 
-      <!-- View 2: 27 Agents Matrix -->
+      <!-- View 2: AI Insights & Alerts Feed -->
       <section class="view-panel" id="view-agents">
-        <div class="section-title">🤖 27 Autonomous Research Desk Agents</div>
-        
-        <!-- NEW: Multi-Agent Execution Pipeline Diagram -->
-        <div class="pipeline-container">
-          <div class="pipeline-node">
-            <div style="color:var(--accent-blue);">Stage 1: Intelligence</div>
-            <div style="font-size:10px; color:var(--text-secondary);">Market, News & Macro</div>
+        <div class="section-title">🔔 AI Insights & Risk Alerts</div>
+        <div class="insights-feed" id="insights-feed">
+          <div class="insight-card info">
+            <div class="insight-icon">🛡️</div>
+            <div class="insight-body">
+              <div class="insight-title">Guardian Squad Active</div>
+              <div class="insight-text">5 protective agents are continuously monitoring your portfolio for accounting traps, governance failures, moat erosion, earnings surprises, and tail risk drawdowns.</div>
+              <div class="insight-time" id="insight-guardian-time">Last audit: Initializing...</div>
+            </div>
           </div>
-          <div class="pipeline-arrow">➔</div>
-          <div class="pipeline-node">
-            <div style="color:var(--accent-purple);">Stage 2: Forensics</div>
-            <div style="font-size:10px; color:var(--text-secondary);">Tech, Traps & Ratios</div>
-          </div>
-          <div class="pipeline-arrow">➔</div>
-          <div class="pipeline-node">
-            <div style="color:var(--accent-amber);">Stage 3: Executive</div>
-            <div style="font-size:10px; color:var(--text-secondary);">CIO Synthesis Desk</div>
-          </div>
-          <div class="pipeline-arrow">➔</div>
-          <div class="pipeline-node">
-            <div style="color:var(--accent-green);">Stage 4: Memory DB</div>
-            <div style="font-size:10px; color:var(--text-secondary);">Knowledge Persistence</div>
-          </div>
-        </div>
-
-        <div class="agents-grid" id="agents-grid-container">
-          <!-- Dynamic rendering from agents.js -->
         </div>
       </section>
 
@@ -353,30 +337,26 @@
         </div>
       </section>
 
-      <!-- View 6: Forensic Scanner -->
+      <!-- View 6: Forensic Scanner (Live from Guardian) -->
       <section class="view-panel" id="view-forensic">
-        <div class="section-title">🛡️ Forensic Trap & Accounting Integrity Scanner</div>
-        <div class="grid-4">
-          <div class="metric-card">
-            <div class="metric-label">Promoter Pledge Status</div>
-            <div class="metric-value" style="color:var(--accent-green);">0.0% Pledged</div>
-            <div class="metric-sub">Clean across all 3 portfolio holdings</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Operating Cash Flow Divergence</div>
-            <div class="metric-value" style="color:var(--accent-green);">OCF > Net Income</div>
-            <div class="metric-sub">Strong cash conversion ratio (>85%)</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Altman Z-Score Rating</div>
-            <div class="metric-value" style="color:var(--accent-green);">3.85 (Safe)</div>
-            <div class="metric-sub">Zero bankruptcy or solvency risk</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Beneish M-Score Rating</div>
-            <div class="metric-value" style="color:var(--accent-green);">-2.95 (Clean)</div>
-            <div class="metric-sub">No financial statement manipulation detected</div>
-          </div>
+        <div class="section-title">🛡️ Forensic Trap & Accounting Integrity Scanner — Live Per-Stock Audit</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Stock</th>
+                <th>Price</th>
+                <th>P&L %</th>
+                <th>Beneish M-Score</th>
+                <th>Promoter Pledge %</th>
+                <th>ROIC %</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="forensic-table-body">
+              <tr><td colspan="7" style="text-align:center; color:var(--text-muted);">Loading Guardian audit data...</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 

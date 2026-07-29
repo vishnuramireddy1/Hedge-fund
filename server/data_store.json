@@ -1,0 +1,422 @@
+{
+  "users": {
+    "user_demo": {
+      "id": "user_demo",
+      "email": "trader@bharatinvest.com",
+      "phone": "+919876543210",
+      "name": "Institutional Trader",
+      "role": "Senior Portfolio Manager",
+      "tier": "Enterprise Tier",
+      "provider": "email",
+      "created_at": "2026-07-29T12:26:24.844Z"
+    },
+    "usr_641crg9s": {
+      "id": "usr_641crg9s",
+      "email": "trader.google@bharatinvest.com",
+      "phone": "",
+      "name": "Google Trader",
+      "role": "Trader & Analyst",
+      "tier": "Institutional Tier",
+      "provider": "google",
+      "created_at": "2026-07-29T12:27:46.177Z"
+    },
+    "usr_4cbt5baq": {
+      "id": "usr_4cbt5baq",
+      "email": "trader@bharatinvest",
+      "phone": "",
+      "name": "TRADER",
+      "role": "Trader & Analyst",
+      "tier": "Institutional Tier",
+      "provider": "email",
+      "created_at": "2026-07-29T12:40:05.003Z"
+    }
+  },
+  "sessions": {
+    "token_1785328066178_cc7n30l": {
+      "userId": "usr_641crg9s",
+      "created_at": "2026-07-29T12:27:46.179Z"
+    },
+    "token_1785328341629_nbbc7an": {
+      "userId": "usr_641crg9s",
+      "created_at": "2026-07-29T12:32:21.629Z"
+    },
+    "token_1785328805005_p97cibl": {
+      "userId": "usr_4cbt5baq",
+      "created_at": "2026-07-29T12:40:05.005Z"
+    },
+    "token_1785329585348_x57qrzq": {
+      "userId": "usr_641crg9s",
+      "created_at": "2026-07-29T12:53:05.349Z"
+    }
+  },
+  "otps": {
+    "+919133068961": {
+      "otp": "123456",
+      "expiresAt": 1785328385214
+    }
+  },
+  "portfolios": {
+    "user_demo": [
+      {
+        "symbol": "RELIANCE",
+        "name": "Reliance Industries Ltd",
+        "sector": "Energy & Retail",
+        "qty": 100,
+        "avgPrice": 1260,
+        "currentPrice": 1275.9,
+        "strategy": "BLUECHIP_COMPOUNDER",
+        "target": 1450,
+        "stopLoss": 1200,
+        "thesis": "Retail & Jio IPO value unlocking"
+      },
+      {
+        "symbol": "TMCV",
+        "name": "Tata Motors Ltd (CV)",
+        "sector": "Automobile",
+        "qty": 450,
+        "avgPrice": 410,
+        "currentPrice": 411.4,
+        "strategy": "SWING_BREAKOUT",
+        "target": 480,
+        "stopLoss": 385,
+        "thesis": "CV demand surge & 50-EMA Golden Cross"
+      },
+      {
+        "symbol": "BHARTIARTL",
+        "name": "Bharti Airtel Ltd",
+        "sector": "Telecom",
+        "qty": 250,
+        "avgPrice": 1445,
+        "currentPrice": 1950.2,
+        "strategy": "BLUECHIP_COMPOUNDER",
+        "target": 2100,
+        "stopLoss": 1750,
+        "thesis": "ARPU ₹211+ free cash flow conversion"
+      },
+      {
+        "symbol": "PERSISTENT",
+        "name": "Persistent Systems",
+        "sector": "IT Services",
+        "qty": 60,
+        "avgPrice": 5410,
+        "currentPrice": 5483.3,
+        "strategy": "SWING_BREAKOUT",
+        "target": 6250,
+        "stopLoss": 5120,
+        "thesis": "GenAI 15%+ TCV booking growth"
+      }
+    ],
+    "usr_641crg9s": [
+      {
+        "symbol": "RELIANCE",
+        "name": "Reliance Industries Ltd",
+        "sector": "Energy & Retail",
+        "qty": 100,
+        "avgPrice": 1260,
+        "currentPrice": 1275.9,
+        "strategy": "BLUECHIP_COMPOUNDER",
+        "target": 1450,
+        "stopLoss": 1200,
+        "thesis": "Retail & Jio IPO value unlocking"
+      },
+      {
+        "symbol": "TMCV",
+        "name": "Tata Motors Ltd (CV)",
+        "sector": "Automobile",
+        "qty": 450,
+        "avgPrice": 410,
+        "currentPrice": 411.4,
+        "strategy": "SWING_BREAKOUT",
+        "target": 480,
+        "stopLoss": 385,
+        "thesis": "CV demand surge & 50-EMA Golden Cross"
+      },
+      {
+        "symbol": "BHARTIARTL",
+        "name": "Bharti Airtel Ltd",
+        "sector": "Telecom",
+        "qty": 250,
+        "avgPrice": 1445,
+        "currentPrice": 1950.2,
+        "strategy": "BLUECHIP_COMPOUNDER",
+        "target": 2100,
+        "stopLoss": 1750,
+        "thesis": "ARPU ₹211+ free cash flow conversion"
+      },
+      {
+        "symbol": "PERSISTENT",
+        "name": "Persistent Systems",
+        "sector": "IT Services",
+        "qty": 60,
+        "avgPrice": 5410,
+        "currentPrice": 5483.3,
+        "strategy": "SWING_BREAKOUT",
+        "target": 6250,
+        "stopLoss": 5120,
+        "thesis": "GenAI 15%+ TCV booking growth"
+      }
+    ],
+    "usr_4cbt5baq": [
+      {
+        "symbol": "RELIANCE",
+        "name": "Reliance Industries Ltd",
+        "sector": "Energy & Retail",
+        "qty": 100,
+        "avgPrice": 1260,
+        "currentPrice": 1275.9,
+        "strategy": "BLUECHIP_COMPOUNDER",
+        "target": 1450,
+        "stopLoss": 1200,
+        "thesis": "Retail & Jio IPO value unlocking"
+      },
+      {
+        "symbol": "TMCV",
+        "name": "Tata Motors Ltd (CV)",
+        "sector": "Automobile",
+        "qty": 450,
+        "avgPrice": 410,
+        "currentPrice": 411.4,
+        "strategy": "SWING_BREAKOUT",
+        "target": 480,
+        "stopLoss": 385,
+        "thesis": "CV demand surge & 50-EMA Golden Cross"
+      },
+      {
+        "symbol": "BHARTIARTL",
+        "name": "Bharti Airtel Ltd",
+        "sector": "Telecom",
+        "qty": 250,
+        "avgPrice": 1445,
+        "currentPrice": 1950.2,
+        "strategy": "BLUECHIP_COMPOUNDER",
+        "target": 2100,
+        "stopLoss": 1750,
+        "thesis": "ARPU ₹211+ free cash flow conversion"
+      },
+      {
+        "symbol": "PERSISTENT",
+        "name": "Persistent Systems",
+        "sector": "IT Services",
+        "qty": 60,
+        "avgPrice": 5410,
+        "currentPrice": 5483.3,
+        "strategy": "SWING_BREAKOUT",
+        "target": 6250,
+        "stopLoss": 5120,
+        "thesis": "GenAI 15%+ TCV booking growth"
+      }
+    ]
+  },
+  "tradeJournals": {
+    "user_demo": [
+      {
+        "symbol": "RELIANCE",
+        "buyPrice": 1260,
+        "qty": 100,
+        "reason": "Value unlocking + 20-EMA rebound",
+        "target": 1450,
+        "stopLoss": 1200,
+        "status": "OPEN"
+      },
+      {
+        "symbol": "TMCV",
+        "buyPrice": 410,
+        "qty": 450,
+        "reason": "Golden Cross 50-EMA breakout",
+        "target": 480,
+        "stopLoss": 385,
+        "status": "OPEN"
+      },
+      {
+        "symbol": "BHARTIARTL",
+        "buyPrice": 1445,
+        "qty": 250,
+        "reason": "20-EMA rebound + ARPU growth",
+        "target": 2100,
+        "stopLoss": 1750,
+        "status": "OPEN"
+      },
+      {
+        "symbol": "PERSISTENT",
+        "buyPrice": 5410,
+        "qty": 60,
+        "reason": "Flag pattern breakout on 2.8x volume",
+        "target": 6250,
+        "stopLoss": 5120,
+        "status": "OPEN"
+      }
+    ],
+    "usr_641crg9s": [
+      {
+        "symbol": "RELIANCE",
+        "buyPrice": 1260,
+        "qty": 100,
+        "reason": "Value unlocking + 20-EMA rebound",
+        "target": 1450,
+        "stopLoss": 1200,
+        "status": "OPEN"
+      },
+      {
+        "symbol": "TMCV",
+        "buyPrice": 410,
+        "qty": 450,
+        "reason": "Golden Cross 50-EMA breakout",
+        "target": 480,
+        "stopLoss": 385,
+        "status": "OPEN"
+      },
+      {
+        "symbol": "BHARTIARTL",
+        "buyPrice": 1445,
+        "qty": 250,
+        "reason": "20-EMA rebound + ARPU growth",
+        "target": 2100,
+        "stopLoss": 1750,
+        "status": "OPEN"
+      },
+      {
+        "symbol": "PERSISTENT",
+        "buyPrice": 5410,
+        "qty": 60,
+        "reason": "Flag pattern breakout on 2.8x volume",
+        "target": 6250,
+        "stopLoss": 5120,
+        "status": "OPEN"
+      }
+    ],
+    "usr_4cbt5baq": [
+      {
+        "symbol": "RELIANCE",
+        "buyPrice": 1260,
+        "qty": 100,
+        "reason": "Value unlocking + 20-EMA rebound",
+        "target": 1450,
+        "stopLoss": 1200,
+        "status": "OPEN"
+      },
+      {
+        "symbol": "TMCV",
+        "buyPrice": 410,
+        "qty": 450,
+        "reason": "Golden Cross 50-EMA breakout",
+        "target": 480,
+        "stopLoss": 385,
+        "status": "OPEN"
+      },
+      {
+        "symbol": "BHARTIARTL",
+        "buyPrice": 1445,
+        "qty": 250,
+        "reason": "20-EMA rebound + ARPU growth",
+        "target": 2100,
+        "stopLoss": 1750,
+        "status": "OPEN"
+      },
+      {
+        "symbol": "PERSISTENT",
+        "buyPrice": 5410,
+        "qty": 60,
+        "reason": "Flag pattern breakout on 2.8x volume",
+        "target": 6250,
+        "stopLoss": 5120,
+        "status": "OPEN"
+      }
+    ]
+  },
+  "agentScans": {},
+  "chatHistories": {
+    "user_demo": [
+      {
+        "sender": "Angel",
+        "text": "### 🏛️ Angel CIO Executive Briefing & Multi-Agent Synthesis\n\n1. **Market Microstructure & Order Flow**:\n   - NIFTY 50 and SENSEX structural breadth remains positive with advance-decline ratio at 1.45.\n   - Institutional Block Deal flow is net positive across Reliance (+₹15.90) and Bharti Airtel (+₹4.20).\n\n2. **Forensic & Fundamental Risk Clearance**:\n   - Beneish M-Score check passed across held positions (No earnings manipulation detected).\n   - Promoter pledge ratio is under control (<5% limit).\n\n3. **Tactical Allocation & Execution Strategy**:\n   - **Target Capital Sizing**: Maintain 10-15% cash buffer.\n   - **Recommended Swing Trade**: Focus on 20-EMA Golden Cross breakouts with strict 3.5% trailing stop-losses.",
+        "time": "06:21 pm"
+      },
+      {
+        "sender": "Angel",
+        "text": "### 🏛️ Angel CIO Executive Briefing & Multi-Agent Synthesis\n\n1. **Market Microstructure & Order Flow**:\n   - NIFTY 50 and SENSEX structural breadth remains positive with advance-decline ratio at 1.45.\n   - Institutional Block Deal flow is net positive across Reliance (+₹15.90) and Bharti Airtel (+₹4.20).\n\n2. **Forensic & Fundamental Risk Clearance**:\n   - Beneish M-Score check passed across held positions (No earnings manipulation detected).\n   - Promoter pledge ratio is under control (<5% limit).\n\n3. **Tactical Allocation & Execution Strategy**:\n   - **Target Capital Sizing**: Maintain 10-15% cash buffer.\n   - **Recommended Swing Trade**: Focus on 20-EMA Golden Cross breakouts with strict 3.5% trailing stop-losses.",
+        "time": "06:21 pm"
+      },
+      {
+        "sender": "Angel",
+        "text": "### 🏛️ Angel CIO Executive Briefing & Multi-Agent Synthesis\n\n1. **Market Microstructure & Order Flow**:\n   - NIFTY 50 and SENSEX structural breadth remains positive with advance-decline ratio at 1.45.\n   - Institutional Block Deal flow is net positive across Reliance (+₹15.90) and Bharti Airtel (+₹4.20).\n\n2. **Forensic & Fundamental Risk Clearance**:\n   - Beneish M-Score check passed across held positions (No earnings manipulation detected).\n   - Promoter pledge ratio is under control (<5% limit).\n\n3. **Tactical Allocation & Execution Strategy**:\n   - **Target Capital Sizing**: Maintain 10-15% cash buffer.\n   - **Recommended Swing Trade**: Focus on 20-EMA Golden Cross breakouts with strict 3.5% trailing stop-losses.",
+        "time": "06:21 pm"
+      },
+      {
+        "sender": "Angel",
+        "text": "### 🏛️ Angel CIO Executive Briefing & Multi-Agent Synthesis\n\n1. **Market Microstructure & Order Flow**:\n   - NIFTY 50 and SENSEX structural breadth remains positive with advance-decline ratio at 1.45.\n   - Institutional Block Deal flow is net positive across Reliance (+₹15.90) and Bharti Airtel (+₹4.20).\n\n2. **Forensic & Fundamental Risk Clearance**:\n   - Beneish M-Score check passed across held positions (No earnings manipulation detected).\n   - Promoter pledge ratio is under control (<5% limit).\n\n3. **Tactical Allocation & Execution Strategy**:\n   - **Target Capital Sizing**: Maintain 10-15% cash buffer.\n   - **Recommended Swing Trade**: Focus on 20-EMA Golden Cross breakouts with strict 3.5% trailing stop-losses.",
+        "time": "06:21 pm"
+      },
+      {
+        "sender": "Angel",
+        "text": "### 🏛️ Angel CIO Executive Briefing & Multi-Agent Synthesis\n\n1. **Market Microstructure & Order Flow**:\n   - NIFTY 50 and SENSEX structural breadth remains positive with advance-decline ratio at 1.45.\n   - Institutional Block Deal flow is net positive across Reliance (+₹15.90) and Bharti Airtel (+₹4.20).\n\n2. **Forensic & Fundamental Risk Clearance**:\n   - Beneish M-Score check passed across held positions (No earnings manipulation detected).\n   - Promoter pledge ratio is under control (<5% limit).\n\n3. **Tactical Allocation & Execution Strategy**:\n   - **Target Capital Sizing**: Maintain 10-15% cash buffer.\n   - **Recommended Swing Trade**: Focus on 20-EMA Golden Cross breakouts with strict 3.5% trailing stop-losses.",
+        "time": "07:36 pm"
+      },
+      {
+        "sender": "Angel",
+        "text": "### 🏛️ Angel CIO Executive Briefing & Multi-Agent Synthesis\n\n1. **Market Microstructure & Order Flow**:\n   - NIFTY 50 and SENSEX structural breadth remains positive with advance-decline ratio at 1.45.\n   - Institutional Block Deal flow is net positive across Reliance (+₹15.90) and Bharti Airtel (+₹4.20).\n\n2. **Forensic & Fundamental Risk Clearance**:\n   - Beneish M-Score check passed across held positions (No earnings manipulation detected).\n   - Promoter pledge ratio is under control (<5% limit).\n\n3. **Tactical Allocation & Execution Strategy**:\n   - **Target Capital Sizing**: Maintain 10-15% cash buffer.\n   - **Recommended Swing Trade**: Focus on 20-EMA Golden Cross breakouts with strict 3.5% trailing stop-losses.",
+        "time": "07:41 pm"
+      },
+      {
+        "sender": "Angel",
+        "text": "### 🏛️ Angel CIO Executive Briefing & Multi-Agent Synthesis\n\n1. **Market Microstructure & Order Flow**:\n   - NIFTY 50 and SENSEX structural breadth remains positive with advance-decline ratio at 1.45.\n   - Institutional Block Deal flow is net positive across Reliance (+₹15.90) and Bharti Airtel (+₹4.20).\n\n2. **Forensic & Fundamental Risk Clearance**:\n   - Beneish M-Score check passed across held positions (No earnings manipulation detected).\n   - Promoter pledge ratio is under control (<5% limit).\n\n3. **Tactical Allocation & Execution Strategy**:\n   - **Target Capital Sizing**: Maintain 10-15% cash buffer.\n   - **Recommended Swing Trade**: Focus on 20-EMA Golden Cross breakouts with strict 3.5% trailing stop-losses.",
+        "time": "07:41 pm"
+      },
+      {
+        "sender": "Angel",
+        "text": "### 🏛️ Angel CIO Executive Briefing & Multi-Agent Synthesis\n\n1. **Market Microstructure & Order Flow**:\n   - NIFTY 50 and SENSEX structural breadth remains positive with advance-decline ratio at 1.45.\n   - Institutional Block Deal flow is net positive across Reliance (+₹15.90) and Bharti Airtel (+₹4.20).\n\n2. **Forensic & Fundamental Risk Clearance**:\n   - Beneish M-Score check passed across held positions (No earnings manipulation detected).\n   - Promoter pledge ratio is under control (<5% limit).\n\n3. **Tactical Allocation & Execution Strategy**:\n   - **Target Capital Sizing**: Maintain 10-15% cash buffer.\n   - **Recommended Swing Trade**: Focus on 20-EMA Golden Cross breakouts with strict 3.5% trailing stop-losses.",
+        "time": "07:41 pm"
+      }
+    ]
+  },
+  "guardianAudits": {
+    "usr_641crg9s": {
+      "status": "WARNING",
+      "healthScore": 96,
+      "criticalAlerts": [],
+      "warningAlerts": [
+        "⚠️ [MOAT ALERT]: BHARTIARTL ROIC (11%) fell below cost of capital (11.5%)."
+      ],
+      "auditedHoldingsCount": 4,
+      "auditedAt": "2026-07-29T14:22:15.351Z",
+      "auditedAtFormatted": "29 Jul 2026, 07:52:15 PM",
+      "details": [
+        {
+          "symbol": "RELIANCE",
+          "currentPrice": 1275.9,
+          "pnlPct": 1.26,
+          "beneishMScore": -2.1,
+          "pledgeRatioPct": 9,
+          "roicPct": 21,
+          "status": "HEALTHY"
+        },
+        {
+          "symbol": "TMCV",
+          "currentPrice": 411.4,
+          "pnlPct": 0.34,
+          "beneishMScore": -2.4,
+          "pledgeRatioPct": 14,
+          "roicPct": 26,
+          "status": "HEALTHY"
+        },
+        {
+          "symbol": "BHARTIARTL",
+          "currentPrice": 1950.2,
+          "pnlPct": 34.96,
+          "beneishMScore": -2.3,
+          "pledgeRatioPct": 5,
+          "roicPct": 11,
+          "status": "WARNING"
+        },
+        {
+          "symbol": "PERSISTENT",
+          "currentPrice": 5483.3,
+          "pnlPct": 1.35,
+          "beneishMScore": -2.1,
+          "pledgeRatioPct": 5,
+          "roicPct": 29,
+          "status": "HEALTHY"
+        }
+      ]
+    }
+  }
+}
