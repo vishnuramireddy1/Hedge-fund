@@ -1,0 +1,11 @@
+# Dockerignore for Hedge‑Fund app
+node_modules
+npm-debug.log
+.env
+.git
+.gitignore
+.DS_Store
+*.md
+*.log
+.idea
+.vscode

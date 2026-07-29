@@ -1,0 +1,20 @@
+# Fly.io configuration for Hedge‑Fund app
+# -------------------------------------------------
+# Edit the `app` name to something unique for your account.
+# You can change the region after the first `flyctl launch`.
+app = "hedge-fund-app"
+primary_region = "iad"
+kill_signal = "SIGINT"
+kill_timeout = 5
+
+[env]
+  PORT = "3000"
+  FIREBASE_API_KEY = "YOUR_FIREBASE_API_KEY"
+  ALPHA_VANTAGE_KEY = "YOUR_ALPHA_VANTAGE_KEY"
+  TOOL_FRAMEWORK = "google_adk"
+  SYNTHESIZE_PARENT = "true"
+
+# Optional persistent volume for user memory (keeps memory.json across restarts)
+[mounts]
+  source = "hedge-fund-data"
+  destination = "/app/server"

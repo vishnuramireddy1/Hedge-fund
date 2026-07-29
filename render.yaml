@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: hedge-fund
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: Dockerfile
+    startCommand: npm start
+    autoDeploy: true
+    disks:
+      - name: data
+        mountPath: /data
+        sizeGB: 1
+    envVars:
+      - key: PORT
+        value: "3000"
+      - key: FIREBASE_API_KEY
+        fromSecret: true
+      - key: ALPHA_VANTAGE_KEY
+        fromSecret: true
+      - key: TOOL_FRAMEWORK
+        value: "google_adk"
+      - key: SYNTHESIZE_PARENT
+        value: "true"
