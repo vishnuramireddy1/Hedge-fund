@@ -7,24 +7,43 @@ const getAgentRoles = () => window.AgentRoles || {};
 const runAgentScan = (key) => (window.runSimulatedAgentScan ? window.runSimulatedAgentScan(key) : null);
 const getCioEngine = (q, h) => (window.queryCioAssistantEngine ? window.queryCioAssistantEngine(q, h) : { response: "Engine loading..." });
 
+// Persistent Portfolio State
+const defaultHoldings = [
+  { symbol: 'RELIANCE', name: 'Reliance Industries Ltd', sector: 'Energy & Retail', qty: 100, avgPrice: 1260.00, currentPrice: 1275.90, strategy: 'BLUECHIP_COMPOUNDER', target: 1450.00, stopLoss: 1200.00, thesis: 'Retail & Jio IPO value unlocking' },
+  { symbol: 'TMCV', name: 'Tata Motors Ltd (CV)', sector: 'Automobile', qty: 450, avgPrice: 410.00, currentPrice: 411.40, strategy: 'SWING_BREAKOUT', target: 480.00, stopLoss: 385.00, thesis: 'CV demand surge & 50-EMA Golden Cross' },
+  { symbol: 'BHARTIARTL', name: 'Bharti Airtel Ltd', sector: 'Telecom', qty: 250, avgPrice: 1445.00, currentPrice: 1950.20, strategy: 'BLUECHIP_COMPOUNDER', target: 2100.00, stopLoss: 1750.00, thesis: 'ARPU ₹211+ free cash flow conversion' },
+  { symbol: 'PERSISTENT', name: 'Persistent Systems', sector: 'IT Services', qty: 60, avgPrice: 5410.00, currentPrice: 5430.00, strategy: 'SWING_BREAKOUT', target: 6250.00, stopLoss: 5120.00, thesis: 'GenAI 15%+ TCV booking growth' }
+];
+
+function loadSavedHoldings() {
+  try {
+    const saved = localStorage.getItem('bharat_invest_holdings');
+    return saved ? JSON.parse(saved) : defaultHoldings;
+  } catch (e) {
+    return defaultHoldings;
+  }
+}
+
+function saveHoldings() {
+  try {
+    localStorage.setItem('bharat_invest_holdings', JSON.stringify(state.holdings));
+  } catch (e) {}
+}
+
 // Application State
 const state = {
   activeTab: 'dashboard',
   isScanning: false,
-  holdings: [
-    { symbol: 'TATAMOTORS', name: 'Tata Motors Ltd', sector: 'Automobile', qty: 450, avgPrice: 982.50, currentPrice: 988.00, strategy: 'SWING_BREAKOUT', target: 1120.00, stopLoss: 935.00, thesis: 'JLR 148k backlog + 50-EMA Golden Cross' },
-    { symbol: 'BHARTIARTL', name: 'Bharti Airtel Ltd', sector: 'Telecom', qty: 250, avgPrice: 1445.00, currentPrice: 1455.00, strategy: 'BLUECHIP_COMPOUNDER', target: 1680.00, stopLoss: 1380.00, thesis: 'ARPU ₹211+ free cash flow conversion' },
-    { symbol: 'PERSISTENT', name: 'Persistent Systems', sector: 'IT Services', qty: 60, avgPrice: 5410.00, currentPrice: 5430.00, strategy: 'SWING_BREAKOUT', target: 6250.00, stopLoss: 5120.00, thesis: 'GenAI 15%+ TCV booking growth' }
-  ],
+  holdings: loadSavedHoldings(),
   tradeEntries: [
-    { symbol: 'TATAMOTORS', buyPrice: 982.50, qty: 450, reason: 'Golden Cross 50-EMA breakout', target: 1120.00, stopLoss: 935.00, status: 'OPEN' },
-    { symbol: 'BHARTIARTL', buyPrice: 1445.00, qty: 250, reason: '20-EMA rebound + ARPU growth', target: 1680.00, stopLoss: 1380.00, status: 'OPEN' },
+    { symbol: 'RELIANCE', buyPrice: 1260.00, qty: 100, reason: 'Value unlocking + 20-EMA rebound', target: 1450.00, stopLoss: 1200.00, status: 'OPEN' },
+    { symbol: 'TMCV', buyPrice: 410.00, qty: 450, reason: 'Golden Cross 50-EMA breakout', target: 480.00, stopLoss: 385.00, status: 'OPEN' },
+    { symbol: 'BHARTIARTL', buyPrice: 1445.00, qty: 250, reason: '20-EMA rebound + ARPU growth', target: 2100.00, stopLoss: 1750.00, status: 'OPEN' },
     { symbol: 'PERSISTENT', buyPrice: 5410.00, qty: 60, reason: 'Flag pattern breakout on 2.8x volume', target: 6250.00, stopLoss: 5120.00, status: 'OPEN' },
-    { symbol: 'BHEL', buyPrice: 285.00, qty: 800, reason: 'Thermal capex backlog beat', target: 360.00, stopLoss: 260.00, status: 'TARGET_HIT' },
     { symbol: 'SUZLON', buyPrice: 58.00, qty: 3000, reason: '100% Debt Free turnaround', target: 82.00, stopLoss: 52.00, status: 'TARGET_HIT' }
   ],
   chatMessages: [
-    { sender: 'CIO', text: 'Greetings. I am your Chief Investment Officer Agent. I am monitoring the Indian stock market (NSE/BSE) across 27 specialized sub-agents with 30-minute autonomous background scanning. Ask me for immediate swing trades, targeted single-agent scans, or catalysts!', time: '16:54' }
+    { sender: 'Angel', text: 'Greetings! I am Angel, your Chief Investment Officer AI Assistant. I am monitoring the Indian stock market (NSE/BSE) across 27 specialized sub-agents with 24/7 autonomous background scanning. Ask me for immediate swing trades, position sizing, or risk limits!', time: '16:54' }
   ],
   scanResults: []
 };
@@ -57,7 +76,15 @@ const LIVE_SYMBOLS = ['^NSEI', '^NSEBANK', '^BSESN', '^INDIAVIX', 'TMCV.NS', 'BH
 
 async function fetchLiveMarketData() {
   try {
-    const res = await fetch(`/api/market?symbols=${LIVE_SYMBOLS.join(',')}`);
+    // Generate dynamic quote list for all active portfolio positions
+    const portfolioSymbols = state.holdings.map(h => {
+      const sym = h.symbol.toUpperCase();
+      return (sym.endsWith('.NS') || sym.endsWith('.BO') || sym.startsWith('^')) ? sym : `${sym}.NS`;
+    });
+
+    const querySymbols = Array.from(new Set([...LIVE_SYMBOLS, ...portfolioSymbols]));
+
+    const res = await fetch(`/api/market?symbols=${querySymbols.join(',')}`);
     const data = await res.json();
     
     Object.keys(data).forEach(sym => {
@@ -80,15 +107,19 @@ async function fetchLiveMarketData() {
       
       // Update Portfolio Holdings
       let baseSym = sym.replace('.NS', '').replace('.BO', '');
-      if (baseSym === 'TMCV') baseSym = 'TATAMOTORS';
-      
-      const holding = state.holdings.find(h => h.symbol === baseSym || h.symbol === sym);
+      const holding = state.holdings.find(h => 
+        h.symbol === baseSym || 
+        h.symbol === sym || 
+        (baseSym === 'TMCV' && (h.symbol === 'TATAMOTORS' || h.symbol === 'TMCV'))
+      );
       if (holding && quote.price) {
         holding.currentPrice = quote.price;
       }
     });
 
-    // Re-render UI with new prices
+    saveHoldings();
+
+    // Re-render UI with live updated numbers
     renderDashboard();
     renderPortfolio();
   } catch (err) {
@@ -302,18 +333,54 @@ function setupEventListeners() {
       renderAgentsGrid();
     }
 
-    state.chatMessages.push({ sender: 'CIO', text: cioResponseText, time: cioTime });
+    state.chatMessages.push({ sender: 'Angel', text: cioResponseText, time: cioTime });
     renderChatHistory();
     
-    // Speak response
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const cleanText = cioResponseText.replace(/[*#]/g, '');
-      const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.rate = 1.05;
-      utterance.pitch = 1.0;
-      window.speechSynthesis.speak(utterance);
+    // Speak response using Angel's Female AI Voice
+    speakAngelVoice(cioResponseText);
+  }
+
+  // Advanced Female Voice Synthesis Engine for Angel
+  function speakAngelVoice(text) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+
+    const cleanText = text.replace(/[*#_`]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 1.02;
+    utterance.pitch = 1.15; // Slightly elevated pitch for natural female tone
+
+    const voices = window.speechSynthesis.getVoices();
+    if (voices && voices.length > 0) {
+      const femaleKeywords = [
+        'google uk english female', 'google us english', 'microsoft zira', 'microsoft heera',
+        'microsoft rhea', 'samantha', 'victoria', 'karen', 'veena', 'neerja', 'zira', 'female'
+      ];
+      
+      let selectedVoice = null;
+      for (const kw of femaleKeywords) {
+        selectedVoice = voices.find(v => v.name.toLowerCase().includes(kw) && v.lang.startsWith('en'));
+        if (selectedVoice) break;
+      }
+
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman'));
+      }
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.startsWith('en'));
+      }
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
     }
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  // Pre-load voices for browsers that load them asynchronously
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
   }
 
   if (btnSend && chatInput) {
@@ -414,8 +481,8 @@ function setupEventListeners() {
   });
   document.getElementById('form-holding')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const sym = document.getElementById('h-symbol').value.toUpperCase();
-    const name = document.getElementById('h-name').value;
+    const sym = document.getElementById('h-symbol').value.toUpperCase().trim();
+    const name = document.getElementById('h-name').value.trim();
     const price = parseFloat(document.getElementById('h-price').value);
     const qty = parseInt(document.getElementById('h-qty').value);
     const tgt = parseFloat(document.getElementById('h-target').value);
@@ -423,12 +490,15 @@ function setupEventListeners() {
 
     state.holdings.push({
       symbol: sym, name: name, sector: 'Equities', qty: qty, avgPrice: price, currentPrice: price,
-      strategy: 'SWING_TRADE', target: tgt, stopLoss: stop, thesis: 'Manual user entry'
+      strategy: 'SWING_TRADE', target: tgt, stopLoss: stop, thesis: 'Live user execution'
     });
 
+    saveHoldings();
     renderPortfolio();
     renderDashboard();
+    fetchLiveMarketData(); // Instantly pull live quote for newly added ticker
     document.getElementById('modal-holding').classList.remove('active');
+    document.getElementById('form-holding').reset();
   });
 }
 
@@ -504,6 +574,15 @@ function renderAgentsGrid() {
   });
 }
 
+function deletePosition(symbol) {
+  state.holdings = state.holdings.filter(h => h.symbol !== symbol);
+  saveHoldings();
+  renderPortfolio();
+  renderDashboard();
+  fetchLiveMarketData();
+}
+window.deletePosition = deletePosition;
+
 // Render Portfolio View
 function renderPortfolio() {
   const tbody = document.getElementById('portfolio-table-body');
@@ -513,7 +592,7 @@ function renderPortfolio() {
   state.holdings.forEach(h => {
     const value = h.qty * h.currentPrice;
     const pnl = (h.currentPrice - h.avgPrice) * h.qty;
-    const pnlPct = ((h.currentPrice - h.avgPrice) / h.avgPrice) * 100;
+    const pnlPct = h.avgPrice > 0 ? ((h.currentPrice - h.avgPrice) / h.avgPrice) * 100 : 0;
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -521,12 +600,13 @@ function renderPortfolio() {
       <td><span class="agent-cat">${h.strategy}</span></td>
       <td>${h.qty}</td>
       <td>₹${h.avgPrice.toFixed(2)}</td>
-      <td>₹${h.currentPrice.toFixed(2)}</td>
-      <td><strong>₹${value.toFixed(2)}</strong></td>
+      <td><strong>₹${h.currentPrice.toFixed(2)}</strong></td>
+      <td><strong>₹${value.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</strong></td>
       <td style="color:${pnl >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}; font-weight:700;">
-        ${pnl >= 0 ? '+' : ''}₹${pnl.toFixed(2)} (${pnlPct.toFixed(1)}%)
+        ${pnl >= 0 ? '+' : ''}₹${pnl.toLocaleString('en-IN', { maximumFractionDigits: 2 })} (${pnlPct.toFixed(1)}%)
       </td>
       <td>Target: ₹${h.target} | SL: ₹${h.stopLoss}</td>
+      <td><button style="background:transparent; border:none; color:var(--accent-red); cursor:pointer; font-size:14px;" onclick="deletePosition('${h.symbol}')" title="Delete Position">🗑️</button></td>
     `;
     tbody.appendChild(tr);
   });
