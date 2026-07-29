@@ -245,12 +245,16 @@ async function pollInvestorGuardianAudit() {
         } else {
           textEl.textContent = `All ${data.auditedHoldingsCount || 4} holdings cleared by 5-agent Guardian Squad (No accounting traps or pledge spikes detected).`;
         }
+      }
+
       const timeEl = document.getElementById('guardian-last-audited');
       if (timeEl && data.auditedAtFormatted) {
         timeEl.textContent = `Last Audited: ${data.auditedAtFormatted}`;
       }
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error('Guardian polling error', e);
+  }
 }
 
 if (document.readyState === 'loading') {
