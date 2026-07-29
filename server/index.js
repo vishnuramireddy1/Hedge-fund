@@ -40,7 +40,9 @@ app.post('/api/ai', async (req, res) => {
   }
 });
 
-// Market ticker data endpoint (Alpha Vantage)
+// Market ticker data endpoint (Yahoo Finance)
+const yahooFinance = require('yahoo-finance2').default;
+
 app.get('/api/market', async (req, res) => {
   const symbols = req.query.symbols;
   if (!symbols) return res.status(400).json({ error: 'Missing symbols query param' });
@@ -48,14 +50,16 @@ app.get('/api/market', async (req, res) => {
   try {
     const results = {};
     for (const sym of arr) {
-      const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${sym}&apikey=${ALPHA_VANTAGE_KEY}`;
-      const resp = await axios.get(url);
-      const quote = resp.data['Global Quote'];
-      if (quote) {
-        results[sym] = {
-          price: parseFloat(quote['05. price']),
-          changePercent: quote['10. change percent']
-        };
+      try {
+        const quote = await yahooFinance.quote(sym);
+        if (quote && quote.regularMarketPrice) {
+          results[sym] = {
+            price: quote.regularMarketPrice,
+            changePercent: (quote.regularMarketChangePercent > 0 ? '+' : '') + quote.regularMarketChangePercent.toFixed(2) + '%'
+          };
+        }
+      } catch (err) {
+        console.warn(`Could not fetch quote for ${sym}: ${err.message}`);
       }
     }
     res.json(results);

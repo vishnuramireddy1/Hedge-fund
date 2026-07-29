@@ -38,7 +38,50 @@ document.addEventListener('DOMContentLoaded', () => {
   renderPortfolio();
   renderJournal();
   renderChatHistory();
+
+  // Start Live Market Data Polling
+  fetchLiveMarketData();
+  setInterval(fetchLiveMarketData, 15000); // Update every 15s
 });
+
+// --- LIVE MARKET DATA MODULE ---
+const LIVE_SYMBOLS = ['^NSEI', '^NSEBANK', '^BSESN', '^INDIAVIX', 'TATAMOTORS.NS', 'BHARTIARTL.NS', 'PERSISTENT.NS', 'SUZLON.NS'];
+
+async function fetchLiveMarketData() {
+  try {
+    const res = await fetch(`/api/market?symbols=${LIVE_SYMBOLS.join(',')}`);
+    const data = await res.json();
+    
+    Object.keys(data).forEach(sym => {
+      const quote = data[sym];
+      const valEl = document.getElementById(`tkr-${sym}-val`);
+      const changeEl = document.getElementById(`tkr-${sym}-change`);
+      
+      if (valEl && quote.price) {
+        valEl.textContent = sym.includes('^') ? quote.price.toFixed(2) : `₹${quote.price.toFixed(2)}`;
+      }
+      
+      if (changeEl && quote.changePercent) {
+        changeEl.textContent = quote.changePercent;
+        const isUp = quote.changePercent.startsWith('+');
+        changeEl.className = `ticker-change ${isUp ? 'up' : 'down'}`;
+      }
+      
+      // Update Portfolio Holdings
+      const baseSym = sym.replace('.NS', '');
+      const holding = state.holdings.find(h => h.symbol === baseSym);
+      if (holding && quote.price) {
+        holding.currentPrice = quote.price;
+      }
+    });
+
+    // Re-render UI with new prices
+    renderDashboard();
+    renderPortfolio();
+  } catch (err) {
+    console.error('Failed to fetch live market data', err);
+  }
+}
 
 // Live Clock & Market Timing Engine
 function updateLiveClockAndMarketStatus() {
