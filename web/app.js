@@ -170,6 +170,8 @@ async function onSearchResultClick(symbol, name) {
     console.error('Quote fetch failed', err);
   }
 }
+// Expose to global scope for inline onclick handlers (module scope)
+window.onSearchResultClick = onSearchResultClick;
 
 // Live Clock & Market Timing Engine
 function updateLiveClockAndMarketStatus() {
