@@ -355,6 +355,24 @@ app.get('/api/me', (req, res) => {
   res.json({ status: 'ACTIVE', user });
 });
 
+// --- 24/7 LONG-TERM INVESTOR PORTFOLIO GUARDIAN ENDPOINT ---
+const { runInvestorGuardianAudit } = require('./investorGuardian');
+
+app.get('/api/guardian/audit', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+    const user = token ? db.getUserBySession(token) : null;
+    const userId = user ? user.id : 'user_demo';
+
+    const audit = await runInvestorGuardianAudit(userId);
+    res.json(audit);
+  } catch (e) {
+    console.error('Guardian audit error', e.message);
+    res.status(500).json({ error: 'Guardian audit failed' });
+  }
+});
+
 // User Isolated Portfolio Endpoints
 app.get('/api/user/portfolio', (req, res) => {
   const authHeader = req.headers.authorization;

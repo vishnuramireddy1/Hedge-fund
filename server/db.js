@@ -186,15 +186,43 @@ function setUserPortfolio(userId, holdings) {
 
 // --- CHAT HISTORY OPERATIONS ---
 function getUserChatHistory(userId) {
+  if (!db.chatHistories) db.chatHistories = {};
   return db.chatHistories[userId] || [
     { sender: 'Angel', text: 'Greetings! I am Angel, your Chief Investment Officer AI Assistant. Ask me for immediate swing trades, position sizing, or risk limits!', time: '16:54' }
   ];
 }
 
 function saveUserChatMessage(userId, msg) {
+  if (!db.chatHistories) db.chatHistories = {};
   if (!db.chatHistories[userId]) db.chatHistories[userId] = [];
   db.chatHistories[userId].push(msg);
   saveDB(db);
+}
+
+// Crypto PBKDF2 Salted Password Hashing
+const crypto = require('crypto');
+
+function hashPassword(password, existingSalt = null) {
+  const salt = existingSalt || crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  return { salt, hash };
+}
+
+function verifyPassword(password, salt, storedHash) {
+  const { hash } = hashPassword(password, salt);
+  return hash === storedHash;
+}
+
+// --- INVESTOR GUARDIAN AUDIT PERSISTENCE ---
+function saveGuardianAudit(userId, auditData) {
+  if (!db.guardianAudits) db.guardianAudits = {};
+  db.guardianAudits[userId] = auditData;
+  saveDB(db);
+}
+
+function getGuardianAudit(userId) {
+  if (!db.guardianAudits) db.guardianAudits = {};
+  return db.guardianAudits[userId] || null;
 }
 
 module.exports = {
@@ -208,5 +236,9 @@ module.exports = {
   getUserPortfolio,
   setUserPortfolio,
   getUserChatHistory,
-  saveUserChatMessage
+  saveUserChatMessage,
+  hashPassword,
+  verifyPassword,
+  saveGuardianAudit,
+  getGuardianAudit
 };

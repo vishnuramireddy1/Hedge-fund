@@ -210,9 +210,44 @@ function initApp() {
   renderJournal();
   renderChatHistory();
 
+  // Start 24/7 Investor Portfolio Guardian Polling
+  pollInvestorGuardianAudit();
+  setInterval(pollInvestorGuardianAudit, 20000);
+
   // Start Live Market Data Polling
   fetchLiveMarketData();
   setInterval(fetchLiveMarketData, 15000); // Update every 15s
+}
+
+async function pollInvestorGuardianAudit() {
+  try {
+    const headers = state.token ? { 'Authorization': `Bearer ${state.token}` } : {};
+    const res = await fetch('/api/guardian/audit', { headers });
+    const data = await res.json();
+
+    if (data && data.status) {
+      const badgeEl = document.getElementById('guardian-status-badge');
+      const textEl = document.getElementById('guardian-status-text');
+      const scoreEl = document.getElementById('guardian-health-score');
+
+      if (badgeEl) {
+        badgeEl.textContent = `${data.status} ${data.status === 'HEALTHY' ? '✅' : data.status === 'WARNING' ? '⚠️' : '🚨'}`;
+        badgeEl.className = `guardian-badge ${data.status.toLowerCase()}`;
+      }
+
+      if (scoreEl) scoreEl.textContent = `Health Score: ${data.healthScore}/100`;
+
+      if (textEl) {
+        if (data.criticalAlerts && data.criticalAlerts.length > 0) {
+          textEl.textContent = data.criticalAlerts[0];
+        } else if (data.warningAlerts && data.warningAlerts.length > 0) {
+          textEl.textContent = data.warningAlerts[0];
+        } else {
+          textEl.textContent = `All ${data.auditedHoldingsCount || 4} holdings cleared by 5-agent Guardian Squad (No accounting traps or pledge spikes detected).`;
+        }
+      }
+    }
+  } catch (e) {}
 }
 
 if (document.readyState === 'loading') {
@@ -608,47 +643,10 @@ function setupEventListeners() {
     speakAngelVoice(cioResponseText);
   }
 
-  // Advanced Female Voice Synthesis Engine for Angel
+  // Voice Synthesis Disabled per User Preference (100% Silent Visual UI)
   function speakAngelVoice(text) {
-    if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-
-    const cleanText = text.replace(/[*#_`]/g, '');
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 1.02;
-    utterance.pitch = 1.15; // Slightly elevated pitch for natural female tone
-
-    const voices = window.speechSynthesis.getVoices();
-    if (voices && voices.length > 0) {
-      const femaleKeywords = [
-        'google uk english female', 'google us english', 'microsoft zira', 'microsoft heera',
-        'microsoft rhea', 'samantha', 'victoria', 'karen', 'veena', 'neerja', 'zira', 'female'
-      ];
-      
-      let selectedVoice = null;
-      for (const kw of femaleKeywords) {
-        selectedVoice = voices.find(v => v.name.toLowerCase().includes(kw) && v.lang.startsWith('en'));
-        if (selectedVoice) break;
-      }
-
-      if (!selectedVoice) {
-        selectedVoice = voices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('woman'));
-      }
-      if (!selectedVoice) {
-        selectedVoice = voices.find(v => v.lang.startsWith('en'));
-      }
-
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      }
-    }
-
-    window.speechSynthesis.speak(utterance);
-  }
-
-  // Pre-load voices for browsers that load them asynchronously
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+    // Silent mode - voice playback disabled
+    return;
   }
 
   if (btnSend && chatInput) {
