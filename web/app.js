@@ -24,9 +24,19 @@ function loadSavedHoldings() {
   }
 }
 
-function saveHoldings() {
+async function saveHoldings() {
   try {
     localStorage.setItem('bharat_invest_holdings', JSON.stringify(state.holdings));
+    if (state.token) {
+      await fetch('/api/user/portfolio', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${state.token}`
+        },
+        body: JSON.stringify({ holdings: state.holdings })
+      });
+    }
   } catch (e) {}
 }
 
@@ -85,21 +95,92 @@ async function loginUser(email, password, remember = true) {
     });
     const data = await res.json();
     if (data.token && data.user) {
-      state.token = data.token;
-      state.user = data.user;
-
-      if (remember) {
-        localStorage.setItem('bharat_invest_token', data.token);
-        localStorage.setItem('bharat_invest_user', JSON.stringify(data.user));
-      }
-
-      checkAuthSession();
-      if (typeof speakAngelVoice === 'function') {
-        speakAngelVoice(`Welcome back, ${data.user.name}. Angel terminal authenticated and live.`);
-      }
+      handleAuthSuccess(data, remember);
     }
   } catch (e) {
     console.error('Login error', e);
+  }
+}
+
+async function loginWithGoogle(credential = null) {
+  try {
+    const body = credential ? { credential } : { email: 'trader.google@bharatinvest.com', name: 'Google Trader' };
+    const res = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (data.token && data.user) {
+      handleAuthSuccess(data, true);
+    }
+  } catch (e) {
+    console.error('Google Auth error', e);
+  }
+}
+
+async function sendPhoneOTP(phone) {
+  try {
+    const res = await fetch('/api/auth/phone/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone })
+    });
+    const data = await res.json();
+    if (data.status === 'SUCCESS') {
+      document.getElementById('form-phone-send').style.display = 'none';
+      document.getElementById('form-phone-verify').style.display = 'block';
+    }
+  } catch (e) {
+    console.error('Phone OTP error', e);
+  }
+}
+
+async function verifyPhoneOTP(phone, otp) {
+  try {
+    const res = await fetch('/api/auth/phone/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, otp })
+    });
+    const data = await res.json();
+    if (data.token && data.user) {
+      handleAuthSuccess(data, true);
+    }
+  } catch (e) {
+    console.error('Verify OTP error', e);
+  }
+}
+
+async function handleAuthSuccess(data, remember = true) {
+  state.token = data.token;
+  state.user = data.user;
+
+  if (remember) {
+    localStorage.setItem('bharat_invest_token', data.token);
+    localStorage.setItem('bharat_invest_user', JSON.stringify(data.user));
+  }
+
+  // Fetch DB user holdings
+  try {
+    const pRes = await fetch('/api/user/portfolio', {
+      headers: { 'Authorization': `Bearer ${data.token}` }
+    });
+    if (pRes.ok) {
+      const pData = await pRes.json();
+      if (pData.holdings && pData.holdings.length > 0) {
+        state.holdings = pData.holdings;
+        saveHoldings();
+      }
+    }
+  } catch (e) {}
+
+  checkAuthSession();
+  renderDashboard();
+  renderPortfolio();
+
+  if (typeof speakAngelVoice === 'function') {
+    speakAngelVoice(`Welcome back, ${data.user.name}. Angel terminal authenticated and live.`);
   }
 }
 
@@ -534,6 +615,47 @@ function setupEventListeners() {
         chatInput.value = `my amount: ${cap} and my ask of return for the invested period: ${tgt}`;
         handleSend();
       }
+    });
+  }
+
+  // Auth Switcher Tabs
+  document.querySelectorAll('.auth-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+
+      tab.classList.add('active');
+      const target = tab.getAttribute('data-auth-tab');
+      const panel = document.getElementById(`auth-panel-${target}`);
+      if (panel) panel.classList.add('active');
+    });
+  });
+
+  // Google Sign In Button
+  const btnGoogle = document.getElementById('btn-google-sign-in');
+  if (btnGoogle) {
+    btnGoogle.addEventListener('click', () => {
+      loginWithGoogle();
+    });
+  }
+
+  // Phone OTP Forms
+  const formPhoneSend = document.getElementById('form-phone-send');
+  if (formPhoneSend) {
+    formPhoneSend.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const phone = '+91' + document.getElementById('login-phone').value.trim();
+      sendPhoneOTP(phone);
+    });
+  }
+
+  const formPhoneVerify = document.getElementById('form-phone-verify');
+  if (formPhoneVerify) {
+    formPhoneVerify.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const phone = '+91' + document.getElementById('login-phone').value.trim();
+      const otp = document.getElementById('login-otp').value.trim();
+      verifyPhoneOTP(phone, otp);
     });
   }
 

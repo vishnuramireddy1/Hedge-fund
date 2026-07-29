@@ -180,24 +180,68 @@ app.post('/api/cio', async (req, res) => {
   }
 });
 
-// User Authentication Endpoint
+// Database Module Import
+const db = require('./db');
+
+// --- AUTHENTICATION & MULTI-TENANT USER ENDPOINTS ---
+
+// Standard Email/Passcode Login
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
-  // Support demo credentials or any valid input
   const userEmail = email || 'trader@bharatinvest.com';
-  const token = 'token_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+  const name = userEmail.split('@')[0].toUpperCase();
+  const user = db.findOrCreateUserByEmail(userEmail, name, 'email');
+  const token = db.createSession(user.id);
   
-  res.json({
-    status: 'SUCCESS',
-    token: token,
-    user: {
-      name: 'Institutional Trader',
-      email: userEmail,
-      role: 'Portfolio Manager & Senior Trader',
-      tier: 'Institutional Enterprise Tier',
-      joined: '2026-01-15'
+  res.json({ status: 'SUCCESS', token, user });
+});
+
+// Google Integrated Login Endpoint
+app.post('/api/auth/google', (req, res) => {
+  const { email, name, googleId, credential } = req.body;
+  if (!email && !credential) return res.status(400).json({ error: 'Missing Google credentials' });
+
+  let userEmail = email;
+  let userName = name;
+
+  // Simple jwt decode if credential passed
+  if (!userEmail && credential) {
+    try {
+      const parts = credential.split('.');
+      const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8'));
+      userEmail = payload.email;
+      userName = payload.name;
+    } catch (e) {
+      userEmail = 'google_trader@bharatinvest.com';
+      userName = 'Google Trader';
     }
-  });
+  }
+
+  const user = db.findOrCreateUserByEmail(userEmail || 'google_user@bharatinvest.com', userName || 'Google User', 'google');
+  const token = db.createSession(user.id);
+  res.json({ status: 'SUCCESS', token, user });
+});
+
+// Phone Login: Send OTP Endpoint
+app.post('/api/auth/phone/send-otp', (req, res) => {
+  const { phone } = req.body;
+  if (!phone) return res.status(400).json({ error: 'Missing phone number' });
+
+  const otp = db.generateOTP(phone);
+  res.json({ status: 'SUCCESS', message: `OTP sent to ${phone}`, testOtp: otp });
+});
+
+// Phone Login: Verify OTP Endpoint
+app.post('/api/auth/phone/verify-otp', (req, res) => {
+  const { phone, otp } = req.body;
+  if (!phone || !otp) return res.status(400).json({ error: 'Missing phone or OTP' });
+
+  const isValid = db.verifyOTP(phone, otp);
+  if (!isValid) return res.status(400).json({ error: 'Invalid or expired OTP' });
+
+  const user = db.findOrCreateUserByPhone(phone);
+  const token = db.createSession(user.id);
+  res.json({ status: 'SUCCESS', token, user });
 });
 
 // Active Session Check Endpoint
@@ -206,15 +250,35 @@ app.get('/api/me', (req, res) => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-  res.json({
-    status: 'ACTIVE',
-    user: {
-      name: 'Institutional Trader',
-      email: 'trader@bharatinvest.com',
-      role: 'Portfolio Manager & Senior Trader',
-      tier: 'Institutional Enterprise Tier'
-    }
-  });
+  const token = authHeader.split(' ')[1];
+  const user = db.getUserBySession(token);
+  if (!user) return res.status(401).json({ error: 'Session expired or invalid' });
+
+  res.json({ status: 'ACTIVE', user });
+});
+
+// User Isolated Portfolio Endpoints
+app.get('/api/user/portfolio', (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+  const user = token ? db.getUserBySession(token) : null;
+  const userId = user ? user.id : 'user_demo';
+
+  const holdings = db.getUserPortfolio(userId);
+  res.json({ holdings });
+});
+
+app.post('/api/user/portfolio', (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+  const user = token ? db.getUserBySession(token) : null;
+  const userId = user ? user.id : 'user_demo';
+
+  const { holdings } = req.body;
+  if (!Array.isArray(holdings)) return res.status(400).json({ error: 'Holdings array required' });
+
+  const updated = db.setUserPortfolio(userId, holdings);
+  res.json({ status: 'SUCCESS', holdings: updated });
 });
 // Health check endpoint
 app.get('/health', (req, res) => res.json({ status: 'ok' }));

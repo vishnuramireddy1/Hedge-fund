@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -438,43 +439,91 @@
       <div class="login-header">
         <div class="login-badge">BHARAT INVEST OS</div>
         <div class="login-title">Institutional Hedge Fund Terminal</div>
-        <div class="login-subtitle">Secure Access Control & Quantum Agent Interface</div>
+        <div class="login-subtitle">Multi-Tenant Identity & Access Management Platform</div>
       </div>
 
-      <form id="form-login" class="login-form">
-        <div class="form-group">
-          <label for="login-email">Trader Access Email / ID</label>
-          <input type="email" id="login-email" class="form-input" placeholder="trader@bharatinvest.com" required value="trader@bharatinvest.com">
-        </div>
+      <!-- Auth Provider Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-auth-tab="google">🌐 Google</button>
+        <button class="auth-tab" data-auth-tab="phone">📱 Phone OTP</button>
+        <button class="auth-tab" data-auth-tab="email">🔑 Email Key</button>
+        <button class="auth-tab" data-auth-tab="demo">⚡ Demo</button>
+      </div>
 
-        <div class="form-group">
-          <label for="login-passcode">Access Passcode / Security Key</label>
-          <div class="password-wrapper">
-            <input type="password" id="login-passcode" class="form-input" placeholder="••••••••••••" required value="angel2026">
-            <button type="button" class="btn-toggle-pass" id="btn-toggle-pass" title="Toggle Passcode Visibility">👁️</button>
+      <!-- Provider 1: Google Auth Panel -->
+      <div class="auth-panel active" id="auth-panel-google">
+        <div class="auth-panel-title">Sign in with Google Workspace</div>
+        <div class="auth-panel-desc">Authenticated via Google Identity Services. Your portfolio & scans sync automatically.</div>
+        
+        <button type="button" class="btn-google-login" id="btn-google-sign-in">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12 0 14.8s.7 5.1 1.9 7.5l3.7-2.9c-.2-.7-.4-1.5-.4-2.3z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/></svg>
+          Continue with Google Account
+        </button>
+      </div>
+
+      <!-- Provider 2: Phone Number OTP Panel -->
+      <div class="auth-panel" id="auth-panel-phone">
+        <form id="form-phone-send" class="login-form">
+          <div class="form-group">
+            <label for="login-phone">Mobile Phone Number</label>
+            <div class="phone-input-group">
+              <span class="country-prefix">🇮🇳 +91</span>
+              <input type="tel" id="login-phone" class="form-input" placeholder="9876543210" required pattern="[0-9]{10}">
+            </div>
           </div>
-        </div>
+          <button type="submit" class="btn-login">📲 Send 6-Digit OTP Code</button>
+        </form>
 
-        <div class="login-options">
-          <label class="remember-label">
-            <input type="checkbox" id="remember-me" checked> Remember Session (30 Days)
-          </label>
-          <span class="security-tag">🔒 PBKDF2-SHA256</span>
-        </div>
+        <form id="form-phone-verify" class="login-form" style="display:none; margin-top:16px;">
+          <div class="form-group">
+            <label for="login-otp">Enter 6-Digit Verification Code</label>
+            <input type="text" id="login-otp" class="form-input otp-input" placeholder="123456" maxlength="6" required value="123456">
+            <div style="font-size:11px; color:var(--accent-green); margin-top:4px;">✓ Test OTP Auto-Filled: 123456</div>
+          </div>
+          <button type="submit" class="btn-login">🔓 Verify & Launch Terminal</button>
+        </form>
+      </div>
 
-        <button type="submit" class="btn-login" id="btn-submit-login">
-          🔓 Authenticate & Launch Terminal
-        </button>
+      <!-- Provider 3: Email / Passcode Panel -->
+      <div class="auth-panel" id="auth-panel-email">
+        <form id="form-login" class="login-form">
+          <div class="form-group">
+            <label for="login-email">Trader Access Email / ID</label>
+            <input type="email" id="login-email" class="form-input" placeholder="trader@bharatinvest.com" required value="trader@bharatinvest.com">
+          </div>
 
-        <div class="login-divider">OR</div>
+          <div class="form-group">
+            <label for="login-passcode">Access Passcode / Security Key</label>
+            <div class="password-wrapper">
+              <input type="password" id="login-passcode" class="form-input" placeholder="••••••••••••" required value="angel2026">
+              <button type="button" class="btn-toggle-pass" id="btn-toggle-pass" title="Toggle Passcode Visibility">👁️</button>
+            </div>
+          </div>
 
+          <div class="login-options">
+            <label class="remember-label">
+              <input type="checkbox" id="remember-me" checked> Remember Session (30 Days)
+            </label>
+            <span class="security-tag">🔒 PBKDF2-SHA256</span>
+          </div>
+
+          <button type="submit" class="btn-login" id="btn-submit-login">
+            🔓 Authenticate & Launch Terminal
+          </button>
+        </form>
+      </div>
+
+      <!-- Provider 4: Instant Institutional Demo Panel -->
+      <div class="auth-panel" id="auth-panel-demo">
+        <div class="auth-panel-title">Instant Institutional Access</div>
+        <div class="auth-panel-desc">Launch the terminal with 1 click using pre-configured institutional access credentials.</div>
         <button type="button" class="btn-instant-demo" id="btn-instant-login">
-          ⚡ Instant Institutional Demo Access
+          ⚡ Launch Institutional Demo Terminal
         </button>
-      </form>
+      </div>
 
       <div class="login-footer">
-        <div>Connected to 27 Autonomous Research Desks • RBI / SEBI Compliant Data Feeds</div>
+        <div>Multi-Tenant DB Active • Connected to 27 Autonomous Research Desks • RBI / SEBI Compliant Data Feeds</div>
       </div>
     </div>
   </div>
