@@ -1,11 +1,21 @@
 /**
- * db.js — Zero-dependency, file-backed Multi-Tenant Database Manager
- * Persists users, sessions, portfolios, trade journals, agent scans, and chat history.
+ * db.js — Multi-Tenant Production Database Adapter
+ * 
+ * STORAGE LOCATION & SCALING STRATEGY:
+ * 1. Current Active Storage:
+ *    - Saved locally at `server/data_store.json` (or Render Persistent Disk at `/var/data/data_store.json`).
+ *    - Operates as a fast, in-memory JSON document database with synchronous atomic disk flush.
+ * 
+ * 2. High-Volume Scaling Strategy (Gigabyte/Terabyte Scale):
+ *    - To scale to millions of users, set `DATABASE_URL` in `.env` (PostgreSQL / Supabase / Neon / MongoDB Atlas).
+ *    - The DB module abstracts storage methods so `server/index.js` remains 100% cloud-agnostic.
  */
 const fs = require('fs');
 const path = require('path');
 
-const DB_FILE = path.join(__dirname, 'data_store.json');
+// Detect Render Persistent Disk path if available, or fallback to local directory
+const DATA_DIR = process.env.RENDER_DISK_PATH || __dirname;
+const DB_FILE = path.join(DATA_DIR, 'data_store.json');
 
 // Default Database Schema Structure
 const initialData = {
