@@ -13,6 +13,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Prevent browser from caching static files during development
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.set('Pragma', 'no-cache');
+  next();
+});
+
 const PORT = process.env.PORT || 3000;
 const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY; // Firebase AI API key
 const ALPHA_VANTAGE_KEY = process.env.ALPHA_VANTAGE_KEY; // Alpha Vantage API key
