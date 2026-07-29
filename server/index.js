@@ -8,6 +8,7 @@ const { AgentRoles } = require('./agentConfig');
 const { validateHierarchy } = require('./validateHierarchy');
 const { invokeAgent } = require('./orchestrator');
 const { callGemini } = require('./geminiHelper'); // reusable Gemini wrapper
+const marketData = require('./marketData');
 
 const app = express();
 app.use(cors());
