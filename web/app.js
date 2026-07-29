@@ -28,7 +28,7 @@ const state = {
 };
 
 // Initialize Application
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
   setupNavigation();
   setupEventListeners();
   updateLiveClockAndMarketStatus();
@@ -42,7 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Start Live Market Data Polling
   fetchLiveMarketData();
   setInterval(fetchLiveMarketData, 15000); // Update every 15s
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
 
 // --- LIVE MARKET DATA MODULE ---
 const LIVE_SYMBOLS = ['^NSEI', '^NSEBANK', '^BSESN', '^INDIAVIX', 'TMCV.NS', 'BHARTIARTL.NS', 'PERSISTENT.NS', 'RELIANCE.NS'];
@@ -71,8 +77,10 @@ async function fetchLiveMarketData() {
       }
       
       // Update Portfolio Holdings
-      const baseSym = sym.replace('.NS', '').replace('.BO', '');
-      const holding = state.holdings.find(h => h.symbol === baseSym);
+      let baseSym = sym.replace('.NS', '').replace('.BO', '');
+      if (baseSym === 'TMCV') baseSym = 'TATAMOTORS';
+      
+      const holding = state.holdings.find(h => h.symbol === baseSym || h.symbol === sym);
       if (holding && quote.price) {
         holding.currentPrice = quote.price;
       }
