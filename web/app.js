@@ -2,8 +2,10 @@
    BHARAT INVEST OS - APPLICATION STATE & UI CONTROLLER
    ========================================================================== */
 
-import { AgentRoles, runSimulatedAgentScan } from './agents.js';
-import { queryCioAssistantEngine } from './cio_assistant.js';
+// Access global agent modules
+const getAgentRoles = () => window.AgentRoles || {};
+const runAgentScan = (key) => (window.runSimulatedAgentScan ? window.runSimulatedAgentScan(key) : null);
+const getCioEngine = (q, h) => (window.queryCioAssistantEngine ? window.queryCioAssistantEngine(q, h) : { response: "Engine loading..." });
 
 // Application State
 const state = {

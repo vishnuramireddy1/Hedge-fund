@@ -2,7 +2,7 @@
    BHARAT INVEST OS - 27 AUTONOMOUS AGENTS & ORCHESTRATOR MODULE
    ========================================================================== */
 
-export const AgentRoles = {
+const AgentRoles = {
   CIO: {
     name: "CIO",
     title: "Chief Investment Officer Agent",
@@ -194,13 +194,14 @@ export const AgentRoles = {
   }
 };
 
+window.AgentRoles = AgentRoles;
+
 // Updated to call backend API for real-time agent scan
-export async function runSimulatedAgentScan(roleKey) {
+async function runSimulatedAgentScan(roleKey) {
   try {
-    const resp = await fetch(`http://localhost:3000/api/scan/${roleKey}`);
+    const resp = await fetch(`/api/scan/${roleKey}`);
     if (!resp.ok) throw new Error('Network response was not ok');
     const data = await resp.json();
-    // Ensure required fields exist; fallback to simulated if missing
     return {
       roleKey: data.roleKey || roleKey,
       title: data.title || roleKey,
@@ -211,30 +212,18 @@ export async function runSimulatedAgentScan(roleKey) {
     };
   } catch (e) {
     console.error('Scan API error', e);
-    // Fallback to simulated data
-    const role = AgentRoles[roleKey];
+    const role = AgentRoles[roleKey] || { title: roleKey, tools: [] };
     const confidence = 88 + Math.floor(Math.random() * 8);
     const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     return {
       roleKey: roleKey,
-      title: role.title,
+      title: role.title || roleKey,
       status: "SUCCESS",
       confidencePct: confidence,
       timestamp: nowStr,
-      findings: `[${role.title}]: Completed simulated scan (fallback).`
+      findings: `[${role.title || roleKey}]: Completed simulated scan (fallback).`
     };
   }
 }
-  const role = AgentRoles[roleKey];
-  const confidence = 88 + Math.floor(Math.random() * 8);
-  const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-  return {
-    roleKey: roleKey,
-    title: role.title,
-    status: "SUCCESS",
-    confidencePct: confidence,
-    timestamp: nowStr,
-    findings: `[${role.title}]: Completed 24/7 autonomous scan. Structural alignment verified across ${role.tools.join(", ")}. Risk parameters within limits.`
-  };
-}
+window.runSimulatedAgentScan = runSimulatedAgentScan;

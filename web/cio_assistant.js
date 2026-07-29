@@ -2,9 +2,8 @@
    BHARAT INVEST OS - AGENTIC CIO AI EXECUTIVE ASSISTANT & SUB-AGENT TRIGGER
    ========================================================================== */
 
-import { AgentRoles } from './agents.js';
-
-export function queryCioAssistantEngine(userQuery, chatHistory = []) {
+function queryCioAssistantEngine(userQuery, chatHistory = []) {
+  const AgentRoles = window.AgentRoles || {};
   const queryLower = (userQuery || '').toLowerCase();
   
   let triggeredKeys = [];
@@ -138,3 +137,5 @@ export function queryCioAssistantEngine(userQuery, chatHistory = []) {
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   };
 }
+
+window.queryCioAssistantEngine = queryCioAssistantEngine;
