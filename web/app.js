@@ -137,11 +137,78 @@ function setupEventListeners() {
 
         state.chatMessages.push({ sender: 'CIO', text: cioResult.response, time: cioTime });
         renderChatHistory();
+        
+        // Speak response
+        if ('speechSynthesis' in window) {
+          const utterance = new SpeechSynthesisUtterance(cioResult.response);
+          utterance.rate = 1.05;
+          utterance.pitch = 1.0;
+          window.speechSynthesis.speak(utterance);
+        }
       }, 400);
     };
 
     btnSend.addEventListener('click', handleSend);
     chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+
+    // Voice Input Setup
+    const btnVoice = document.getElementById('btn-voice-chat');
+    if (btnVoice) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-IN'; // Indian English
+        
+        let isRecording = false;
+
+        recognition.onstart = () => {
+          isRecording = true;
+          btnVoice.style.backgroundColor = 'var(--accent-red)';
+          btnVoice.style.color = 'white';
+          chatInput.placeholder = 'Listening... Speak now.';
+        };
+
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          chatInput.value = transcript;
+          setTimeout(handleSend, 500); // Auto-send after reading
+        };
+
+        recognition.onerror = (event) => {
+          console.error('Speech recognition error', event.error);
+          chatInput.placeholder = 'Error listening. Try again.';
+          resetVoiceBtn();
+        };
+
+        recognition.onend = () => {
+          resetVoiceBtn();
+        };
+
+        function resetVoiceBtn() {
+          isRecording = false;
+          btnVoice.style.backgroundColor = 'var(--bg-darker)';
+          btnVoice.style.color = 'var(--accent-purple)';
+          chatInput.placeholder = 'Ask CIO Assistant for swing trades, position sizing, 27-agent support, or risk limits...';
+        }
+
+        btnVoice.addEventListener('click', () => {
+          if (isRecording) {
+            recognition.stop();
+          } else {
+            // Cancel any ongoing speech so they don't overlap
+            if ('speechSynthesis' in window) {
+               window.speechSynthesis.cancel();
+            }
+            recognition.start();
+          }
+        });
+      } else {
+        btnVoice.style.display = 'none';
+        console.warn('Speech Recognition API not supported in this browser.');
+      }
+    }
 
     // Quick Chip Buttons
     document.querySelectorAll('.chip-btn').forEach(btn => {
