@@ -205,7 +205,6 @@ function initApp() {
   updateLiveClockAndMarketStatus();
   setInterval(updateLiveClockAndMarketStatus, 1000);
   renderDashboard();
-  renderAgentsGrid();
   renderPortfolio();
   renderJournal();
   renderChatHistory();
