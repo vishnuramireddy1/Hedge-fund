@@ -5,7 +5,7 @@
 import { AgentRoles } from './agents.js';
 
 export function queryCioAssistantEngine(userQuery, chatHistory = []) {
-  const queryLower = userQuery.lowercase ? userQuery.lowercase() : userQuery.toLowerCase();
+  const queryLower = (userQuery || '').toLowerCase();
   
   let triggeredKeys = [];
   let responseText = "";

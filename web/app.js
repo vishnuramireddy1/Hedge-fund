@@ -244,122 +244,162 @@ function setupEventListeners() {
   const btnScan = document.getElementById('btn-run-scan');
   if (btnScan) btnScan.addEventListener('click', triggerMultiAgentScan);
 
-  // Chat Send Button
   const btnSend = document.getElementById('btn-send-chat');
   const chatInput = document.getElementById('chat-input');
-  if (btnSend && chatInput) {
-    const handleSend = () => {
-      const txt = chatInput.value.trim();
-      if (!txt) return;
 
-      const userTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      state.chatMessages.push({ sender: 'USER', text: txt, time: userTime });
-      chatInput.value = '';
-      renderChatHistory();
+  async function handleSend() {
+    if (!chatInput) return;
+    const txt = chatInput.value.trim();
+    if (!txt) return;
 
-      setTimeout(() => {
-        const cioResult = queryCioAssistantEngine(txt, state.chatMessages);
-        const cioTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const userTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    state.chatMessages.push({ sender: 'USER', text: txt, time: userTime });
+    chatInput.value = '';
+    renderChatHistory();
 
-        // Trigger live scan for the selected sub-agents
-        if (cioResult.triggeredAgentKeys && cioResult.triggeredAgentKeys.length > 0) {
-          cioResult.triggeredAgentKeys.forEach(key => {
-            const scan = runSimulatedAgentScan(key);
-            // Replace or append scan result
-            const idx = state.scanResults.findIndex(r => r.roleKey === key);
-            if (idx >= 0) {
-              state.scanResults[idx] = scan;
-            } else {
-              state.scanResults.push(scan);
-            }
-          });
-          renderAgentsGrid();
+    let cioResponseText = "";
+    let triggeredAgentKeys = [];
+
+    // Try Backend AI Endpoint First
+    try {
+      const res = await fetch('/api/cio', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: txt })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.reply) {
+          cioResponseText = data.reply;
         }
-
-        state.chatMessages.push({ sender: 'CIO', text: cioResult.response, time: cioTime });
-        renderChatHistory();
-        
-        // Speak response
-        if ('speechSynthesis' in window) {
-          const utterance = new SpeechSynthesisUtterance(cioResult.response);
-          utterance.rate = 1.05;
-          utterance.pitch = 1.0;
-          window.speechSynthesis.speak(utterance);
-        }
-      }, 400);
-    };
-
-    btnSend.addEventListener('click', handleSend);
-    chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
-
-    // Voice Input Setup
-    const btnVoice = document.getElementById('btn-voice-chat');
-    if (btnVoice) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = 'en-IN'; // Indian English
-        
-        let isRecording = false;
-
-        recognition.onstart = () => {
-          isRecording = true;
-          btnVoice.style.backgroundColor = 'var(--accent-red)';
-          btnVoice.style.color = 'white';
-          chatInput.placeholder = 'Listening... Speak now.';
-        };
-
-        recognition.onresult = (event) => {
-          const transcript = event.results[0][0].transcript;
-          chatInput.value = transcript;
-          setTimeout(handleSend, 500); // Auto-send after reading
-        };
-
-        recognition.onerror = (event) => {
-          console.error('Speech recognition error', event.error);
-          chatInput.placeholder = 'Error listening. Try again.';
-          resetVoiceBtn();
-        };
-
-        recognition.onend = () => {
-          resetVoiceBtn();
-        };
-
-        function resetVoiceBtn() {
-          isRecording = false;
-          btnVoice.style.backgroundColor = 'var(--bg-darker)';
-          btnVoice.style.color = 'var(--accent-purple)';
-          chatInput.placeholder = 'Ask CIO Assistant for swing trades, position sizing, 27-agent support, or risk limits...';
-        }
-
-        btnVoice.addEventListener('click', () => {
-          if (isRecording) {
-            recognition.stop();
-          } else {
-            // Cancel any ongoing speech so they don't overlap
-            if ('speechSynthesis' in window) {
-               window.speechSynthesis.cancel();
-            }
-            recognition.start();
-          }
-        });
-      } else {
-        btnVoice.style.display = 'none';
-        console.warn('Speech Recognition API not supported in this browser.');
       }
+    } catch (e) {
+      console.warn('Backend CIO API call fallback:', e);
     }
 
-    // Quick Chip Buttons
-    document.querySelectorAll('.chip-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const promptText = btn.getAttribute('data-prompt');
-        if (promptText) {
-          chatInput.value = promptText;
-          handleSend();
+    // Client-side Fallback Engine if backend returned no reply
+    if (!cioResponseText) {
+      const cioResult = queryCioAssistantEngine(txt, state.chatMessages);
+      cioResponseText = cioResult.response;
+      triggeredAgentKeys = cioResult.triggeredAgentKeys || [];
+    }
+
+    const cioTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    // Trigger live scan for the selected sub-agents
+    if (triggeredAgentKeys && triggeredAgentKeys.length > 0) {
+      triggeredAgentKeys.forEach(key => {
+        const scan = runSimulatedAgentScan(key);
+        const idx = state.scanResults.findIndex(r => r.roleKey === key);
+        if (idx >= 0) {
+          state.scanResults[idx] = scan;
+        } else {
+          state.scanResults.push(scan);
         }
       });
+      renderAgentsGrid();
+    }
+
+    state.chatMessages.push({ sender: 'CIO', text: cioResponseText, time: cioTime });
+    renderChatHistory();
+    
+    // Speak response
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const cleanText = cioResponseText.replace(/[*#]/g, '');
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  if (btnSend && chatInput) {
+    btnSend.addEventListener('click', handleSend);
+    chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
+  }
+
+  // Voice Input Setup
+  const btnVoice = document.getElementById('btn-voice-chat');
+  if (btnVoice && chatInput) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-IN'; // Indian English
+      
+      let isRecording = false;
+
+      recognition.onstart = () => {
+        isRecording = true;
+        btnVoice.style.backgroundColor = 'var(--accent-red)';
+        btnVoice.style.color = 'white';
+        chatInput.placeholder = 'Listening... Speak now.';
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        chatInput.value = transcript;
+        setTimeout(handleSend, 500); // Auto-send after reading
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error', event.error);
+        chatInput.placeholder = 'Error listening. Try again.';
+        resetVoiceBtn();
+      };
+
+      recognition.onend = () => {
+        resetVoiceBtn();
+      };
+
+      function resetVoiceBtn() {
+        isRecording = false;
+        btnVoice.style.backgroundColor = 'var(--bg-darker)';
+        btnVoice.style.color = 'var(--accent-purple)';
+        chatInput.placeholder = 'Ask CIO Assistant for swing trades, position sizing, 27-agent support, or risk limits...';
+      }
+
+      btnVoice.addEventListener('click', () => {
+        if (isRecording) {
+          recognition.stop();
+        } else {
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+          }
+          recognition.start();
+        }
+      });
+    } else {
+      btnVoice.style.display = 'none';
+    }
+  }
+
+  // Quick Chip Buttons
+  document.querySelectorAll('.chip-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const promptText = btn.getAttribute('data-prompt');
+      if (promptText && chatInput) {
+        chatInput.value = promptText;
+        handleSend();
+      }
+    });
+  });
+
+  // Position Sizing Calculator CIO Connect Button
+  const btnCalcCio = document.getElementById('btn-calc-ask-cio');
+  if (btnCalcCio) {
+    btnCalcCio.addEventListener('click', () => {
+      const cioNavItem = document.querySelector('.nav-item[data-tab="cio"]');
+      if (cioNavItem) cioNavItem.click();
+      
+      const cap = document.getElementById('lbl-cap')?.textContent || '₹10,000';
+      const tgt = document.getElementById('lbl-tgt')?.textContent || '3.5%';
+      if (chatInput) {
+        chatInput.value = `my amount: ${cap} and my ask of return for the invested period: ${tgt}`;
+        handleSend();
+      }
     });
   }
 
