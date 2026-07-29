@@ -95,13 +95,19 @@ async function runInvestorGuardianAudit(userId = 'user_demo') {
   const avgHealth = Math.round(totalHealthScore / holdings.length);
   const status = criticalAlerts.length > 0 ? 'CRITICAL' : warningAlerts.length > 0 ? 'WARNING' : 'HEALTHY';
 
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  const auditedAtFormatted = `${dateStr}, ${timeStr}`;
+
   const auditResult = {
     status,
     healthScore: avgHealth,
     criticalAlerts,
     warningAlerts,
     auditedHoldingsCount: holdings.length,
-    auditedAt: new Date().toISOString(),
+    auditedAt: now.toISOString(),
+    auditedAtFormatted,
     details: auditDetails
   };
 
