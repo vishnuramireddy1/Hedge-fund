@@ -5,192 +5,192 @@
 const AgentRoles = {
   CIO: {
     name: "CIO",
-    title: "Chief Investment Officer Agent",
+    title: "Angel — Chief Investment Officer Agent",
     category: "Core Executive",
-    description: "Final decision maker, synthesizes research from all sub-agents into actionable theses.",
-    tools: ["ThesisSynthesizer", "PortfolioAllocated", "RiskGatekeeper"]
+    description: "30-Year Veteran Hedge Fund CIO. Synthesizes research from all 27 sub-agents into institutional investment theses, capital allocation, and strict risk limits.",
+    tools: ["ThesisSynthesizer", "MultiAgentOrchestrator", "PortfolioCapitalAllocator", "RiskGatekeeper", "MacroRegimeClassifier", "DrawdownShield"]
   },
   MARKET_INTELLIGENCE: {
     name: "MARKET_INTELLIGENCE",
-    title: "Market Intelligence Agent",
+    title: "Market Intelligence & Microstructure Agent",
     category: "Market Operations",
-    description: "Monitors real-time NSE/BSE market structure, breadth, and order flows.",
-    tools: ["NSEDataStream", "MarketBreadthScanner", "IndexCalculator"]
+    description: "30-Year Senior Market Microstructure Specialist. Monitors real-time NSE/BSE market structure, order book liquidity, market breadth, and tick-level flows.",
+    tools: ["NSEBseLiveDataStream", "MarketBreadthScanner", "AdvanceDeclineRatioModel", "TickLevelOrderBookScanner", "InstitutionalBlockDealTracker", "VIXVolatilityRegimeDetector"]
   },
   NEWS_INTELLIGENCE: {
     name: "NEWS_INTELLIGENCE",
-    title: "News Intelligence Agent",
+    title: "Corporate News & SEBI Intelligence Agent",
     category: "Market Operations",
-    description: "Scans SEBI filings, BSE announcements, financial news, and sentiment.",
-    tools: ["BseAnnouncementScanner", "NewsSentimentAnalyzer", "EntityExtractor"]
+    description: "30-Year Corporate Disclosure Veteran. Scans SEBI regulatory filings, BSE announcements, sentiment, and insider trading patterns.",
+    tools: ["SEBIFilingAnalyzer", "BSECorporateAnnouncementsScanner", "FinancialNewsSentimentEngine", "EntityRelationshipExtractor", "InsiderTradingMonitor", "MediaHypeDetector"]
   },
   PORTFOLIO_MANAGER: {
     name: "PORTFOLIO_MANAGER",
-    title: "Portfolio Manager Agent",
+    title: "Senior Quantitative Portfolio Manager",
     category: "Portfolio & Risk",
-    description: "Monitors portfolio allocation, position sizing, beta, cash ratio, and drawdown.",
-    tools: ["PositionSizer", "PortfolioBetaCalculator", "DrawdownMonitor"]
+    description: "30-Year Senior Quantitative Portfolio Manager. Monitors optimal capital sizing, portfolio beta, Kelly Criterion limits, and cash buffer reserves.",
+    tools: ["OptimalPositionSizer", "PortfolioBetaCalculator", "KellyCriterionEngine", "DrawdownMonitor", "CashBufferReserveManager", "RebalanceOptimizer"]
   },
   FUNDAMENTAL_ANALYSIS: {
     name: "FUNDAMENTAL_ANALYSIS",
-    title: "Fundamental Analysis Agent",
+    title: "Senior Fundamental Analysis Agent",
     category: "Research & Analysis",
-    description: "Analyzes Balance Sheets, P&L, Cash Flow, ROE, ROCE, and Debt ratios.",
-    tools: ["FinancialStatementParser", "RatioCalculator", "DupontAnalyzer"]
+    description: "30-Year Senior Fundamental & Financial Statement Analyst. Analyzes Balance Sheets, P&L, DuPont ROE, ROIC vs WACC, and Free Cash Flow Yield.",
+    tools: ["FinancialStatementParser", "DuPont3FactorAnalyzer", "ROICvsWACCEvaluator", "FreeCashFlowYieldCalculator", "DebtCoverageRatioModel", "WorkingCapitalEfficiencyScanner"]
   },
   TECHNICAL_ANALYSIS: {
     name: "TECHNICAL_ANALYSIS",
-    title: "Technical Analysis Agent",
+    title: "Technical Analysis & Chart Pattern Architect",
     category: "Research & Analysis",
-    description: "Calculates RSI, MACD, Moving Averages, Supertrend, and Chart Breakouts.",
-    tools: ["TechnicalIndicators", "ChartPatternRecognizer", "SupportResistanceFinder"]
+    description: "30-Year Chartered Market Technician (CMT). Calculates multi-timeframe EMAs, RSI/MACD confluence, Supertrend breakouts, and Volume Profile nodes.",
+    tools: ["MultiTimeframeEMAEngine", "RSI_MACD_ConfluenceScanner", "SupertrendBreakoutDetector", "SupportResistanceNodeFinder", "VolumeProfileAnalyzer", "FibonacciRetracementEngine"]
   },
   MACRO_ECONOMY: {
     name: "MACRO_ECONOMY",
-    title: "Macro Economy Agent",
+    title: "Chief Macro Economy & Policy Agent",
     category: "Macro & Sector",
-    description: "Monitors RBI Monetary Policy, Inflation (CPI/WPI), US Fed rates, and Crude Oil.",
-    tools: ["RbiPolicyTracker", "MacroDataFetcher", "InflationModel"]
+    description: "30-Year Chief Macro Economist. Tracks RBI Monetary Policy stance, CPI/WPI inflation, US Fed rate trajectories, Brent Crude, and Yield Curves.",
+    tools: ["RBIMonetaryPolicyTracker", "FedInterestRateExpectationModel", "InflationCPI_WPI_Analyzer", "BrentCrudeFxSensitivityModel", "YieldCurveInversionDetector", "GlobalCapitalFlowMonitor"]
   },
   SECTOR_ROTATION: {
     name: "SECTOR_ROTATION",
-    title: "Sector Rotation Agent",
+    title: "Sector Rotation & Relative Strength Agent",
     category: "Macro & Sector",
-    description: "Tracks relative strength of Indian sectors (Nifty Auto, IT, Pharma, Infra).",
-    tools: ["SectorHeatmapCalculator", "RelativeStrengthIndex", "FlowTracker"]
+    description: "30-Year Senior Sector Strategist. Tracks relative strength of Indian sectors (Nifty Auto, IT, Pharma, Infra, PSU Banks) and capital flows.",
+    tools: ["NiftySectorHeatmapCalculator", "SectorRelativeStrengthIndex", "InstitutionalSectorFlowTracker", "CyclicalVsDefensiveRotationModel", "AlphaGenerationEngine", "ThemeBreakoutScanner"]
   },
   COMPANY_RESEARCH: {
     name: "COMPANY_RESEARCH",
-    title: "Company Research Agent",
+    title: "Equity Research Director",
     category: "Research & Analysis",
-    description: "Conducts deep-dive company research, corporate history, and product mix.",
-    tools: ["AnnualReportReader", "CorporateFilingParser", "ProductMixAnalyzer"]
+    description: "30-Year Equity Research Director. Conducts granular deep-dives into corporate history, product mix, capex execution, and management guidance.",
+    tools: ["AnnualReportDeepDiveReader", "CorporateFilingParser", "SegmentalRevenueAnalyzer", "ProductMixMarginEvaluator", "CapexExecutionTracker", "ManagementGuidanceAuditor"]
   },
   COMPETITION_ANALYSIS: {
     name: "COMPETITION_ANALYSIS",
-    title: "Competition Analysis Agent",
+    title: "Competitive Moat & Market Share Agent",
     category: "Research & Analysis",
-    description: "Evaluates peer market share, competitive intensity, and industry pricing power.",
-    tools: ["PeerComparisonTool", "MarketShareTracker", "PricingPowerEvaluator"]
+    description: "30-Year Competitive Intelligence Head. Evaluates peer market share, competitive intensity, Porter's 5 Forces, and pricing power.",
+    tools: ["PeerComparisonMatrix", "IndustryMarketShareTracker", "PricingPowerEvaluator", "Porter5ForcesScorer", "CustomerSwitchingCostAnalyzer", "SupplyChainBottleneckDetector"]
   },
   BUSINESS_QUALITY: {
     name: "BUSINESS_QUALITY",
-    title: "Business Quality Agent",
+    title: "Business Quality & Moat Auditor",
     category: "Research & Analysis",
-    description: "Evaluates Economic Moats, pricing power, capital allocation, and ROIC.",
-    tools: ["MoatEvaluator", "CapitalEfficiencyCalculator", "PricingPowerScore"]
+    description: "30-Year Warren Buffett Style Business Auditor. Evaluates Economic Moats, ROIC reinvestment rates, capital efficiency, and owner earnings.",
+    tools: ["EconomicMoatEvaluator", "CapitalEfficiencyScorecard", "PricingPowerRatingEngine", "ROICReinvestmentRateModel", "OwnerEarningsCalculator", "PricingDisciplineTracker"]
   },
   MANAGEMENT_ACCOUNTABILITY: {
     name: "MANAGEMENT_ACCOUNTABILITY",
-    title: "Management Accountability Agent",
+    title: "Corporate Governance & Integrity Agent",
     category: "Research & Analysis",
-    description: "Checks promoter background, promoter pledged shares, salary vs profit, and SEBI compliance.",
-    tools: ["PromoterPledgeChecker", "GovernanceAuditor", "SebiFilingAnalyzer"]
+    description: "30-Year Corporate Governance Head. Checks promoter backgrounds, pledge ratios, related-party transactions (RPTs), and SEBI compliance.",
+    tools: ["PromoterPledgeChecker", "RelatedPartyTransactionAuditor", "ExecutiveCompensationVsProfitModel", "SEBIEnforcementTracker", "BoardIndependenceScorer", "AuditQualificationScanner"]
   },
   LIQUIDITY_MARKET_STRUCTURE: {
     name: "LIQUIDITY_MARKET_STRUCTURE",
-    title: "Liquidity & Market Structure Agent",
+    title: "Institutional Flow & Liquidity Agent",
     category: "Market Operations",
-    description: "Analyzes FII/DII institutional flows, delivery percentages, and float liquidity.",
-    tools: ["FiiDiiFlowTracker", "DeliveryVolumeAnalyzer", "FloatLiquidityCalculator"]
+    description: "30-Year Institutional Trading Desk Head. Analyzes FII/DII net flow dynamics, delivery volume spikes, free-float liquidity, and block deals.",
+    tools: ["FIIDIIFlowTracker", "DeliveryVolumeSpikeAnalyzer", "FreeFloatLiquidityCalculator", "BulkBlockDealScanner", "DarkPoolFlowEstimator", "ShortInterestTracker"]
   },
   TRAP_DETECTION: {
     name: "TRAP_DETECTION",
-    title: "Trap Detection Agent",
+    title: "Forensic Accounting & Trap Detector",
     category: "Risk & Safeguard",
-    description: "Detects value traps, accounting red flags, promoter dumps, and momentum traps.",
-    tools: ["RedFlagScanner", "PledgeWarningDetector", "AccountingAnomalyChecker"]
+    description: "30-Year Forensic Accounting Auditor. Scans for Beneish M-Score manipulation, Altman Z-Score solvency risks, OCF divergence, and value traps.",
+    tools: ["BeneishMScoreCalculator", "AltmanZScoreModel", "PledgeWarningDetector", "OperatingCashFlowDivergenceScanner", "AggressiveRevenueRecognitionDetector", "AuditorResignationAlert"]
   },
   OPPORTUNITY_DISCOVERY: {
     name: "OPPORTUNITY_DISCOVERY",
-    title: "Opportunity Discovery Agent",
+    title: "Alpha Opportunity Discovery Agent",
     category: "Discovery",
-    description: "Discovers high-probability momentum breakouts and undervalued compounders.",
-    tools: ["BreakoutScanner", "UndervaluedCompounderFinder", "VolumeSpikeDetector"]
+    description: "30-Year Alpha Discovery Head. Discovers high-probability momentum breakouts, 52-week consolidation breakouts, and turnaround compounders.",
+    tools: ["HighConvictionBreakoutScanner", "UndervaluedCompounderFinder", "VolumeSpikeDetector", "TurnaroundCandidateFilter", "52WeekHighBreakoutMonitor", "DeepValueScreen"]
   },
   RISK_ANALYSIS: {
     name: "RISK_ANALYSIS",
-    title: "Risk Analysis Agent",
+    title: "Chief Risk Officer (CRO) Agent",
     category: "Portfolio & Risk",
-    description: "Evaluates Value at Risk (VaR), portfolio beta, correlation matrix, and downside risk.",
-    tools: ["VaRCalculator", "CorrelationMatrix", "DownsideRiskEvaluator"]
+    description: "30-Year Chief Risk Officer. Evaluates Historical VaR, Monte Carlo simulations, correlation matrices, tail risks, and drawdown limits.",
+    tools: ["HistoricalVaRCalculator", "MonteCarloSimulationEngine", "CrossAssetCorrelationMatrix", "DownsideTailRiskEvaluator", "StressTestingModel", "PortfolioMaxDrawdownShield"]
   },
   EARNINGS_ANALYSIS: {
     name: "EARNINGS_ANALYSIS",
-    title: "Earnings Analysis Agent",
+    title: "Earnings & Concall Specialist Agent",
     category: "Research & Analysis",
-    description: "Parses quarterly earnings reports (Q1-Q4), concall transcripts, and revenue guidance.",
-    tools: ["EarningsTranscriptParser", "GuidanceTracker", "SurpriseCalculator"]
+    description: "30-Year Quarterly Earnings Analyst. Parses concall transcripts, guidance beats/misses, margin expansion, and order backlog trends.",
+    tools: ["EarningsConcallTranscriptParser", "GuidanceBeatMissTracker", "EarningsSurpriseCalculator", "MarginExpansionContractorModel", "OrderBookBacklogAuditor", "InventoryTurnoverAnalyzer"]
   },
   VALUATION: {
     name: "VALUATION",
-    title: "Valuation Agent",
+    title: "Chief Valuation Strategist Agent",
     category: "Research & Analysis",
-    description: "Calculates DCF Fair Value, PE/PB Band multiples, and Margin of Safety.",
-    tools: ["DCFCalculator", "MultipleBandAnalyzer", "MarginOfSafetyCalculator"]
+    description: "30-Year Senior Valuation Strategist. Calculates Multi-Stage DCF Fair Value, Historical PE/PB bands, EV/EBITDA multiples, and Margin of Safety.",
+    tools: ["MultiStageDCFCalculator", "HistoricalPEPB_BandAnalyzer", "EVtoEBITDAMultipleModel", "MarginOfSafetyCalculator", "SumOfThePartsValuer", "ReverseDCFMarketExpectationEngine"]
   },
   EVENT_IMPACT: {
     name: "EVENT_IMPACT",
-    title: "Event Impact Agent",
+    title: "Catalyst & Macro Event Analyst Agent",
     category: "Macro & Sector",
-    description: "Quantifies market impact of Union Budget, RBI rate decisions, and geopolitical events.",
-    tools: ["EventImpactModel", "VolatilityPredictor", "PolicyParser"]
+    description: "30-Year High-Impact Event Trader. Quantifies market impact of Union Budget policy shifts, RBI rate decisions, crude shocks, and geopolitical events.",
+    tools: ["UnionBudgetImpactModel", "RBIPolicySurprisePredictor", "GeopoliticalShockEvaluator", "EventVolatilityPricer", "RegulatoryChangeImpactModel", "EarningsEventStraddleModel"]
   },
   WATCHLIST: {
     name: "WATCHLIST",
-    title: "Watchlist Agent",
+    title: "Watchlist Conviction Strategist Agent",
     category: "Discovery",
-    description: "Curates and ranks high-conviction stocks nearing buy zones.",
-    tools: ["BuyZoneAlertSystem", "WatchlistRanker", "CatalystTracker"]
+    description: "30-Year Conviction Strategist. Ranks high-probability stocks approaching optimal institutional buy zones.",
+    tools: ["BuyZoneProximitySystem", "ConvictionScoreRanker", "CatalystCountdownTracker", "RiskRewardFilter", "LiquidityGatekeeper", "EntryTriggerNotifier"]
   },
   LEARNING_PERFORMANCE: {
     name: "LEARNING_PERFORMANCE",
-    title: "Learning & Performance Agent",
+    title: "Quant Performance Auditor Agent",
     category: "System Intelligence",
-    description: "Analyzes past trade journal outcomes, calculates win-rate, and updates AI weights.",
-    tools: ["TradeJournalAuditor", "WinRateCalculator", "FeedbackLoopOptimizer"]
+    description: "30-Year Quantitative Performance Auditor. Evaluates trade journal win-rates, Sharpe/Sortino ratios, loss attribution, and optimizes strategy weights.",
+    tools: ["TradeJournalAuditor", "WinRateExpectancyCalculator", "SharpeSortinoRatioModel", "LossAttributionAnalyzer", "SystemWeightOptimizer", "BehavioralBiasDetector"]
   },
   MEMORY_MANAGEMENT: {
     name: "MEMORY_MANAGEMENT",
-    title: "Memory Management Agent",
+    title: "Knowledge Base & Memory Curator Agent",
     category: "System Intelligence",
-    description: "Maintains historical memory, updates Markdown knowledge base, and vector memory.",
-    tools: ["KnowledgeBaseUpdater", "MarkdownFormatter", "MemorySearchEngine"]
+    description: "30-Year Historical Pattern Curator. Maintains vector memory, updates Markdown Knowledge Base, and retrieves historical market regime matches.",
+    tools: ["KnowledgeBaseUpdater", "MarkdownFormatter", "VectorMemorySearchEngine", "HistoricalPatternRetriever", "CaseStudyArchiver", "RegimeMemorySynchronizer"]
   },
   DAILY_BRIEFING: {
     name: "DAILY_BRIEFING",
-    title: "Daily Briefing Agent",
+    title: "Pre & Post Market Briefing Head Agent",
     category: "Reporting",
-    description: "Generates daily pre-market & post-market executive briefing summaries.",
-    tools: ["DailyReportGenerator", "MarketSummaryBuilder", "ExecutiveBriefWriter"]
+    description: "30-Year Senior Market Editor. Generates daily pre-market institutional battle-plans and post-market reconciliation summaries.",
+    tools: ["PreMarketBriefingGenerator", "PostMarketReconciliationWriter", "KeyLevelNotifier", "GlobalMarketsOvernightTracker", "InstitutionalDeskSummaryBuilder", "RiskAlertSynthesizer"]
   },
   WEEKLY_REVIEW: {
     name: "WEEKLY_REVIEW",
-    title: "Weekly Review Agent",
+    title: "Weekly Performance Strategist Agent",
     category: "Reporting",
-    description: "Synthesizes weekly portfolio performance, sectoral trends, and trade reviews.",
-    tools: ["WeeklyReportGenerator", "TrendSynthesizer", "TradeReviewer"]
+    description: "30-Year Weekly Performance Strategist. Synthesizes weekly portfolio performance, sectoral trends, closed positions, and risk adjustments.",
+    tools: ["WeeklyPerformanceSynthesizer", "SectorRelativeStrengthReviewer", "ClosedTradeAuditor", "PositionAdjustmentPlanner", "MacroShiftEvaluator", "ExecutiveWeeklyBriefingGenerator"]
   },
   MONTHLY_STRATEGY: {
     name: "MONTHLY_STRATEGY",
-    title: "Monthly Strategy Agent",
+    title: "Chief Investment Strategist Agent",
     category: "Reporting",
-    description: "Formulates monthly macroeconomic outlook, asset allocation shifts, and long-term thesis.",
-    tools: ["MonthlyStrategyBuilder", "AssetAllocationPlanner", "MacroOutlookSynthesizer"]
+    description: "30-Year Chief Investment Strategist. Formulates monthly macroeconomic allocation shifts, megatrend themes, and long-term theses.",
+    tools: ["MonthlyMacroOutlookSynthesizer", "AssetAllocationShiftPlanner", "LongTermThesisAuditor", "GlobalLiquidityCycleModel", "MegatrendThemeExtractor", "StrategicRebalanceEngine"]
   },
   SWING_TRADE_EXPERT: {
     name: "SWING_TRADE_EXPERT",
-    title: "Swing Trade & Breakout Specialist",
+    title: "Senior Swing & Breakout Execution Specialist",
     category: "Discovery & Execution",
-    description: "Finds immediate high-conviction swing trade setups with precise entry, target, stop loss, and R:R ratio.",
-    tools: ["SwingSetupScanner", "BreakoutVolumeScanner", "RiskRewardCalculator"]
+    description: "30-Year Master Swing Trader. Identifies high-conviction swing setups with exact entry ranges, target prices, hard stop-losses, and >1:2.5 R:R ratios.",
+    tools: ["HighVelocitySwingScanner", "BreakoutVolumeSurgeAnalyzer", "PrecisionEntryStopTargetCalculator", "RiskRewardRatioFilter", "TrailingStopLossEngine", "ExecutionSlippageOptimizer"]
   },
   TIMING_CATALYST_AGENT: {
     name: "TIMING_CATALYST_AGENT",
-    title: "Why Now? Catalyst Agent",
+    title: "Precision Timing & Catalyst Agent",
     category: "Market Operations",
-    description: "Analyzes immediate technical breakouts, earnings catalysts, order book spikes, and news events explaining why to trade right now.",
-    tools: ["CatalystTriggerDetector", "OrderFlowSpikeAnalyzer", "TimingPrecisionEngine"]
+    description: "30-Year Timing Precision Specialist. Pinpoints why to trade right now based on order book spikes, block deal flows, and news triggers.",
+    tools: ["ImmediateCatalystDetector", "OrderBookSpikeAnalyzer", "TimingPrecisionEngine", "NewsFlowTriggerScorer", "BlockDealAccelerationTracker", "MomentumContinuationFilter"]
   }
 };
 
