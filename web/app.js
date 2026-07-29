@@ -582,9 +582,7 @@ function setupNavigation() {
 
 // Event Listeners Setup
 function setupEventListeners() {
-  // Run Scan Button
-  const btnScan = document.getElementById('btn-run-scan');
-  if (btnScan) btnScan.addEventListener('click', triggerMultiAgentScan);
+  // Scan button removed (27-agent scan system removed per user request)
 
   const btnSend = document.getElementById('btn-send-chat');
   const chatInput = document.getElementById('chat-input');
@@ -628,19 +626,7 @@ function setupEventListeners() {
 
     const cioTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    // Trigger live scan for the selected sub-agents
-    if (triggeredAgentKeys && triggeredAgentKeys.length > 0) {
-      triggeredAgentKeys.forEach(key => {
-        const scan = runSimulatedAgentScan(key);
-        const idx = state.scanResults.findIndex(r => r.roleKey === key);
-        if (idx >= 0) {
-          state.scanResults[idx] = scan;
-        } else {
-          state.scanResults.push(scan);
-        }
-      });
-      renderAgentsGrid();
-    }
+    // 27-agent scan removed — responses handled directly by Angel CIO
 
     state.chatMessages.push({ sender: 'Angel', text: cioResponseText, time: cioTime });
     renderChatHistory();
@@ -741,6 +727,9 @@ function setupEventListeners() {
         chatInput.value = `my amount: ${cap} and my ask of return for the invested period: ${tgt}`;
         handleSend();
       }
+    });
+  }
+
   // Embedded Right Side Angel CIO Assistant Handlers
   const handleEmbeddedCioSend = async (queryText = null) => {
     const inputEl = document.getElementById('stock-cio-input');
@@ -923,33 +912,6 @@ function setupEventListeners() {
   });
 }
 
-// Trigger 27-Agent Scan
-function triggerMultiAgentScan() {
-  if (state.isScanning) return;
-  state.isScanning = true;
-
-  const btn = document.getElementById('btn-run-scan');
-  if (btn) btn.textContent = 'Scanning 27 Agents...';
-
-  state.scanResults = [];
-  const roles = Object.keys(AgentRoles);
-  
-  let i = 0;
-  const interval = setInterval(() => {
-    if (i < roles.length) {
-      const res = runSimulatedAgentScan(roles[i]);
-      state.scanResults.push(res);
-      renderAgentsGrid();
-      i++;
-    } else {
-      clearInterval(interval);
-      state.isScanning = false;
-      if (btn) btn.textContent = '⚡ Run 27-Agent Scan';
-      renderDashboard();
-    }
-  }, 100);
-}
-
 // Render Dashboard
 function renderDashboard() {
   const totalValue = state.holdings.reduce((sum, h) => sum + (h.qty * h.currentPrice), 0);
@@ -965,34 +927,6 @@ function renderDashboard() {
     elPnl.textContent = `${pnl >= 0 ? '+' : ''}₹${pnl.toFixed(2)} (${pnlPct.toFixed(2)}%)`;
     elPnl.style.color = pnl >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
   }
-}
-
-// Render 27 Agents Matrix Grid
-function renderAgentsGrid() {
-  const grid = document.getElementById('agents-grid-container');
-  if (!grid) return;
-
-  grid.innerHTML = '';
-  Object.keys(AgentRoles).forEach(key => {
-    const role = AgentRoles[key];
-    const card = document.createElement('div');
-    card.className = 'agent-card';
-
-    const lastScan = state.scanResults.find(r => r.roleKey === key);
-
-    card.innerHTML = `
-      <div class="agent-header">
-        <div class="agent-title">${role.title}</div>
-        <div class="agent-cat">${role.category}</div>
-      </div>
-      <div class="agent-desc">${role.description}</div>
-      <div class="agent-tools">Tools: ${role.tools.join(', ')}</div>
-      <div style="font-size: 11px; font-family: var(--font-mono); color: var(--accent-green);">
-        ${lastScan ? `✓ Scanned [${lastScan.timestamp}] | Confidence: ${lastScan.confidencePct}%` : '🟢 Status: Active (30-Min Cron)'}
-      </div>
-    `;
-    grid.appendChild(card);
-  });
 }
 
 function deletePosition(symbol) {
